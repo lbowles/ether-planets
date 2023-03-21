@@ -15,7 +15,8 @@
         let angle = 0;
         let textureImg;
         let stars = [];
-
+        let planetSize;
+        let glowSize;
 
         function setup() {
             createCanvas(400, 400, WEBGL);
@@ -44,6 +45,9 @@
                     radius: random(0.5, 2),
                 });
             }
+
+            planetSize = random(50, 250);
+            glowSize = planetSize + random(10, 40)
         }
 
         function generateTexture(elevationThresholds, colors) {
@@ -101,10 +105,9 @@
             // Draw planet
             texture(textureImg);
             noStroke();
-            sphere(200);
+            sphere(planetSize);
 
             // Simple glow effect
-            let glowSize = 220;
             let numGlowLayers = 5;
             let glowColor = color(255, 100, 80, 10);
             for (let i = 1; i <= numGlowLayers; i++) {

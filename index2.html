@@ -70,6 +70,7 @@
 
             let elevation = textureImg.noise(u * 4, v * 4);
             let col = color(0);
+            let found = false;
             for (let i = 0; i < elevationThresholds.length; i++) {
               if (elevation < elevationThresholds[i]) {
                 col = lerpColor(
@@ -80,8 +81,12 @@
                       (elevationThresholds[i] -
                         (i === 0 ? 0 : elevationThresholds[i - 1])))
                 );
+                found = true;
                 break;
               }
+            }
+            if (!found) {
+              col = colors[colors.length - 1]; // Assign the last color if elevation is greater than the last threshold
             }
             textureImg.set(x, y, col);
           }

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5"></script>
+  </head>
+  <style>
+    body {
+      background-color: black;
+    }
+  </style>
+
+  <body>
+    <script>
+      let angle = 0;
+      let textureImg;
+      let stars = [];
+      let planetSize;
+      let glowSize;
+      let initialRotationX;
+      let initialRotationY;
+      let hasRings;
+      let rings = [];
+      let ringSize;
+
+      function setup() {
+        createCanvas(400, 400, WEBGL);
+        let numColors = 5;
+        let randomPalette = [];
+        for (let i = 0; i < numColors; i++) {
+          randomPalette.push(color(random(255), random(255), random(255)));
+        }
+        let thresholds = [];
+        for (let i = 0; i < numColors - 1; i++) {
+          thresholds.push(random());
+        }
+        thresholds.sort();
+        let randomColorPalette = {
+          thresholds: thresholds,
+          colors: randomPalette,
+        };
+        textureImg = generateTexture(
+          randomColorPalette.thresholds,
+          randomColorPalette.colors
+        );
+
+        // Generate stars
+        for (let i = 0; i < 1000; i++) {
+          stars.push({
+            x: random(-width * 5, width * 5),
+            y: random(-height * 5, height * 5),
+            z: random(width * 5),
+            radius: random(0.5, 2),
+          });
+        }
+
+        planetSize = random(50, 250);
+        glowSize = planetSize + random(10, 40);
+        initialRotationX = random(360);
+        initialRotationY = random(360);
+
+        // Determine if the planet should have rings
+        hasRings = random() < 0.5; // 50% chance
+        if (hasRings) {
+          ringSize = random(planetSize * 1.5, planetSize * 2);
+          // Generate particles for the rings
+          for (let i = 0; i < 1000; i++) {
+            let theta = random(TWO_PI);
+            let ringRadius = random(ringSize * 0.7, ringSize);
+            rings.push({
+              x: ringRadius * cos(theta),
+              y: ringRadius * sin(theta),
+              z: random(-5, 5),
+              radius: random(0.1, 2),
+            });
+          }
+        }
+      }
+
+      function generateTexture(elevationThresholds, colors) {
+        let textureImg = createGraphics(1024, 512);
+        textureImg.noiseSeed(random(1000));
+
+        for (let x = 0; x < textureImg.width; x++) {
+          for (let y = 0; y < textureImg.height; y++) {
+            // Convert x and y to spherical coordinates
+            let lon = map(x, 0, textureImg.width, 0, TWO_PI);
+            let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2);
+            let u = (cos(lat) * cos(lon) + 1) / 2;
+            let v = (cos(lat) * sin(lon) + 1) / 2;
+
+            let elevation = textureImg.noise(u * 4, v * 4);
+            let col = color(0);
+            let found = false;
+            for (let i = 0; i < elevationThresholds.length; i++) {
+              if (elevation < elevationThresholds[i]) {
+                col = lerpColor(
+                  colors[i],
+                  colors[i + 1],
+                  (elevation - (i === 0 ? 0 : elevationThresholds[i - 1])) *
+                    (1 /
+                      (elevationThresholds[i] -
+                        (i === 0 ? 0 : elevationThresholds[i - 1])))
+                );
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              col = colors[colors.length - 1]; // Assign the last color if elevation is greater than the last threshold
+            }
+            textureImg.set(x, y, col);
+          }
+        }
+        textureImg.updatePixels();
+        return textureImg;
+      }
+
+      function draw() {
+        background(0);
+        // Set up ambient light
+        ambientLight(100);
+        ambientMaterial(0);
+
+        // Set up point light
+        pointLight(255, 100, 255, 400, 400, 1200);
+        // Draw stars
+        push();
+        translate(0, 0, -1200);
+        for (let star of stars) {
+          stroke(255);
+          strokeWeight(star.radius);
+          point(star.x, star.y, star.z);
+        }
+        pop();
+
+        // Draw rings if the planet has them
+        if (hasRings) {
+          rotateY(initialRotationY + angle);
+          rotateX(HALF_PI);
+          for (let ringParticle of rings) {
+            stroke(255);
+            strokeWeight(ringParticle.radius);
+            point(ringParticle.x, ringParticle.y, ringParticle.z);
+          }
+        }
+
+        let fixedDistance = 450;
+        let maxAngle = radians(10); // Convert 5 degrees to radians
+        let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle);
+        let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle);
+        let camX = fixedDistance * sin(mouseYRatio);
+        let camY = fixedDistance * cos(mouseXRatio);
+        let camZ = fixedDistance;
+        camera(400, -100, 400, 0, 0, 0, 0, 1, 0);
+
+        // Rotate planet
+        rotateY(initialRotationY + angle);
+        rotateX(initialRotationX + QUARTER_PI);
+        rotateZ(QUARTER_PI);
+        angle += 0.005;
+
+        // Draw planet
+        texture(textureImg);
+        noStroke();
+        sphere(planetSize);
+
+        // Simple glow effect
+        let numGlowLayers = 5;
+        let glowColor = color(255, 100, 80, 10);
+        for (let i = 1; i <= numGlowLayers; i++) {
+          fill(glowColor);
+          sphere(glowSize + i * 2);
+        }
+      }
+    </script>
+  </body>
+</html>

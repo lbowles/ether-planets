@@ -16,6 +16,8 @@
       let stars = [];
       let planetSize;
       let glowSize;
+      let initialRotationX;
+      let initialRotationY;
 
       function setup() {
         createCanvas(400, 400, WEBGL);
@@ -50,6 +52,8 @@
 
         planetSize = random(50, 250);
         glowSize = planetSize + random(10, 40);
+        initialRotationX = random(360);
+        initialRotationY = random(360);
       }
 
       function generateTexture(elevationThresholds, colors) {
@@ -104,20 +108,20 @@
         ambientMaterial(0);
 
         // Set up point light
-        pointLight(255, 255, 255, -400, -200, 1200);
+        pointLight(255, 100, 255, 400, 400, 1200);
 
-        // Set up camera
         let fixedDistance = 450;
-        let camX =
-          fixedDistance * sin(atan2(mouseY - height / 2, mouseX - width / 2));
-        let camY =
-          fixedDistance * cos(atan2(mouseY - height / 2, mouseX - width / 2));
+        let maxAngle = radians(10); // Convert 5 degrees to radians
+        let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle);
+        let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle);
+        let camX = fixedDistance * sin(mouseYRatio);
+        let camY = fixedDistance * cos(mouseXRatio);
         let camZ = fixedDistance;
         camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
         // Rotate planet
-        rotateY(angle);
-        rotateX(QUARTER_PI);
+        rotateY(initialRotationY + angle);
+        rotateX(initialRotationX + QUARTER_PI);
         rotateZ(QUARTER_PI);
         angle += 0.005;
 

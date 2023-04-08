@@ -26,6 +26,7 @@
       let moonSize;
       let moons = [];
       let moonTextures = [];
+      let planetType;
 
       function setup() {
         createCanvas(500, 500, WEBGL);
@@ -43,10 +44,6 @@
           thresholds: thresholds,
           colors: randomPalette,
         };
-        textureImg = generateTexture(
-          randomColorPalette.thresholds,
-          randomColorPalette.colors
-        );
 
         // Generate stars
         for (let i = 0; i < 1000; i++) {
@@ -58,16 +55,21 @@
           });
         }
 
-        planetSize = 30;
+        planetSize = random(30, 170);
         glowSize = planetSize + random(10, 20);
         initialRotationX = random(360);
         initialRotationY = 148;
+        planetType = random() < 0.5 ? "gas" : "solid";
+        textureImg = generateTexture(
+          randomColorPalette.thresholds,
+          randomColorPalette.colors,
+          planetType
+        );
 
         // Determine if the planet should have rings
         hasRings = random() < 0.5; // 50% chance
         numRingParticles = random(400, 1500);
         if (hasRings) {
-          console.log(planetSize * 2);
           ringSize = random(planetSize * 1.5, planetSize * 2);
           // Generate particles for the rings
           for (let i = 0; i < numRingParticles; i++) {
@@ -106,9 +108,11 @@
         }
       }
 
-      function generateTexture(elevationThresholds, colors) {
+      function generateTexture(elevationThresholds, colors, planetType) {
         let textureImg = createGraphics(1024, 512);
         textureImg.noiseSeed(random(1000));
+
+        let noiseScale = planetType === "gas" ? 1 : 4;
 
         for (let x = 0; x < textureImg.width; x++) {
           for (let y = 0; y < textureImg.height; y++) {
@@ -117,7 +121,7 @@
             let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2);
             let u = (cos(lat) * cos(lon) + 1) / 2;
             let v = (cos(lat) * sin(lon) + 1) / 2;
-            let elevation = textureImg.noise(u * 4, v * 4);
+            let elevation = textureImg.noise(u * noiseScale, v * noiseScale);
             let col = color(255);
             let found = false;
             for (let i = 0; i < elevationThresholds.length; i++) {

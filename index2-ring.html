@@ -85,16 +85,18 @@
         numMoons = floor(random(0, 4)); // Up to 3 moons
         for (let i = 0; i < 4; i++) {
           let moonRadius = random(planetSize * 0.05, planetSize * 0.25);
-          let moonDistance = random(planetSize * 1.5, planetSize * 6);
+          let moonDistance = random(planetSize * 1.5, planetSize * 8);
           let randomRingParticle = random(rings); // Get a random ring particle
           let moonAngle = 0; // Keep the angle between // Calculate the angle using the particle's coordinates
-          let moonSpeed = random(0.0001, 0.012); // Add random speed property
+          let moonSpeed = random(0.001, 0.011); // Add random speed property
           moonTextures.push(generateMoonTexture());
+          let orbitAngle = radians(random(-15, 15));
           moons.push({
             radius: moonRadius,
             distance: moonDistance,
             angle: moonAngle,
             speed: moonSpeed, // Add speed property to moon object
+            orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
           });
         }
       }
@@ -159,20 +161,13 @@
         push();
         texture(moonTexture);
         noStroke();
+        rotateX(moon.orbitAngle); // Add this line to apply the orbit angle
         rotateY(moon.angle);
         translate(moon.distance, 0, 0);
         sphere(moon.radius);
         pop();
       }
 
-      function drawMoonOrbit(moon) {
-        push();
-        noFill();
-
-        rotateX(HALF_PI);
-        ellipse(0, 0, moon.distance * 2, moon.distance * 2);
-        pop();
-      }
       function draw() {
         background(0);
         // Set up ambient light
@@ -245,8 +240,6 @@
         for (let i = 0; i < 4; i++) {
           let moon = moons[i];
           let moonTexture = moonTextures[i];
-          drawMoonOrbit(moon);
-
           push(); // Add push() to isolate the moon rotation transformation
           drawMoon(moon, moonTexture);
           pop(); // Add pop() to isolate the moon rotation transformation

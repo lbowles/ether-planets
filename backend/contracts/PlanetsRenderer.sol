@@ -30,7 +30,7 @@ contract PlanetsRenderer is IPlanetsRenderer {
     // To build the html I use Scripty to manage all the annoying tagging and html construction
     // A combination of EthFS and Scripty is used for storage and this array stores the required
     // code data
-    WrappedScriptRequest[] memory requests = new WrappedScriptRequest[](4);
+    WrappedScriptRequest[] memory requests = new WrappedScriptRequest[](5);
 
     // Step 1.
     // - create custom content blocks that have no wrapper
@@ -62,7 +62,7 @@ contract PlanetsRenderer is IPlanetsRenderer {
     requests[1].wrapType = 1;
     requests[1].scriptContent = _vars;
 
-    // Step 4.
+    // Step 3.
     // - pull the gzipped p5 lib from EthFS
     // - wrapType 2 will handle the gzip script wrappers
     //
@@ -74,7 +74,21 @@ contract PlanetsRenderer is IPlanetsRenderer {
     requests[2].wrapType = 2;
     requests[2].contractAddress = _ethfsFileStorageAddress;
 
-    // Step 6.
+    // Step 4.
+    // - pull the coaster code from scriptyStorage
+    //   I could have stored on EthFS, but wanted to show that pulling from
+    //   another contract is possible.
+    // - wrapType 2 will handle the gzip script wrappers
+    //
+    // Final Output:
+    // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L642
+    // <script type="text/javascript+gzip" src="data:text/javascript;base64,[cryptoCoaster.min.js.gz]"></script>
+
+    requests[3].name = "planets.min.js.gz"; // TODO
+    requests[3].wrapType = 2;
+    requests[3].contractAddress = _ethfsFileStorageAddress;
+
+    // Step 4.
     // - pull the gunzip handler from EthFS
     // - wrapType 1 will handle the script tags
     //
@@ -82,9 +96,9 @@ contract PlanetsRenderer is IPlanetsRenderer {
     // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L638
     // <script src="data:text/javascript;base64,[gunzipScripts-0.0.1.js]"></script>
 
-    requests[3].name = "gunzipScripts-0.0.1.js";
-    requests[3].wrapType = 1;
-    requests[3].contractAddress = _ethfsFileStorageAddress;
+    requests[4].name = "gunzipScripts-0.0.1.js";
+    requests[4].wrapType = 1;
+    requests[4].contractAddress = _ethfsFileStorageAddress;
 
     IScriptyBuilder iScriptyBuilder = IScriptyBuilder(_scriptyBuilderAddress);
     uint256 bufferSize = iScriptyBuilder.getBufferSizeForURLSafeHTMLWrapped(requests);

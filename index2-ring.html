@@ -15,7 +15,6 @@
       let textureImg;
       let stars = [];
       let planetSize;
-      let glowSize;
       let initialRotationX;
       let initialRotationY;
       let hasRings;
@@ -59,7 +58,6 @@
         }
 
         planetSize = random(30, 170);
-        glowSize = planetSize + random(10, 20);
         initialRotationX = random(360);
         initialRotationY = 148;
         planetType = random() < 0.5 ? "gas" : "solid";

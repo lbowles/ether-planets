@@ -22,6 +22,10 @@
       let rings = [];
       let ringSize;
       let numRingParticles;
+      let numMoons;
+      let moonSize;
+      let moons = [];
+      let moonTextures = [];
 
       function setup() {
         createCanvas(500, 500, WEBGL);
@@ -76,6 +80,20 @@
             });
           }
         }
+
+        // Generate moons
+        numMoons = floor(random(0, 4)); // Up to 3 moons
+        for (let i = 0; i < 4; i++) {
+          let moonRadius = random(planetSize * 0.07, planetSize * 0.25);
+          let moonDistance = random(planetSize * 1.5, planetSize * 4);
+          let moonAngle = random(TWO_PI);
+          moonTextures.push(generateMoonTexture());
+          moons.push({
+            radius: moonRadius,
+            distance: moonDistance,
+            angle: moonAngle,
+          });
+        }
       }
 
       function generateTexture(elevationThresholds, colors) {
@@ -116,6 +134,25 @@
         return textureImg;
       }
 
+      function generateMoonTexture() {
+        let textureImg = createGraphics(1024, 512);
+        textureImg.noiseSeed(random(1000));
+
+        for (let x = 0; x < textureImg.width; x++) {
+          for (let y = 0; y < textureImg.height; y++) {
+            let lon = map(x, 0, textureImg.width, 0, TWO_PI);
+            let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2);
+            let u = (cos(lat) * cos(lon) + 1) / 2;
+            let v = (cos(lat) * sin(lon) + 1) / 2;
+            let elevation = textureImg.noise(u * 4, v * 4);
+            let col = color(map(elevation, 0, 1, 20, 255));
+            textureImg.set(x, y, col);
+          }
+        }
+        textureImg.updatePixels();
+        return textureImg;
+      }
+
       function draw() {
         background(0);
         // Set up ambient light
@@ -123,7 +160,7 @@
         ambientMaterial(0);
 
         // Set up point light
-        pointLight(255, 100, 255, 400, 400, 1200);
+        pointLight(255, 255, 255, 400, 400, 1200);
 
         // Draw stars
         push();
@@ -186,6 +223,20 @@
         for (let i = 1; i <= numGlowLayers; i++) {
           fill(glowColor);
           sphere(glowSize + i * 2);
+        }
+
+        // Draw moons
+        for (let moon of moons) {
+          push();
+          let moonOrbitRadius = moon.distance;
+          let x = moonOrbitRadius * cos(moon.angle + angle);
+          let z = moonOrbitRadius * sin(moon.angle + angle);
+          translate(x, 0, z);
+          rotateX(HALF_PI);
+          texture(moonTextures[moons.indexOf(moon)]);
+          sphere(moon.radius);
+          pop();
+          moon.angle += 0.01;
         }
       }
     </script>

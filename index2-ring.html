@@ -155,7 +155,24 @@
         textureImg.updatePixels();
         return textureImg;
       }
+      function drawMoon(moon, moonTexture) {
+        push();
+        texture(moonTexture);
+        noStroke();
+        rotateY(moon.angle);
+        translate(moon.distance, 0, 0);
+        sphere(moon.radius);
+        pop();
+      }
 
+      function drawMoonOrbit(moon) {
+        push();
+        noFill();
+
+        rotateX(HALF_PI);
+        ellipse(0, 0, moon.distance * 2, moon.distance * 2);
+        pop();
+      }
       function draw() {
         background(0);
         // Set up ambient light
@@ -201,7 +218,7 @@
         }
 
         let fixedDistance = 450;
-        let maxAngle = radians(10); // Convert 5 degrees to radians
+        let maxAngle = radians(10);
         let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle);
         let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle);
         let camX = 400 * sin(mouseYRatio);
@@ -210,6 +227,7 @@
         camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
         // Rotate planet
+        push(); // Add push() to isolate the rotation transformation
         rotateY(initialRotationY + angle);
         rotateX(initialRotationX + QUARTER_PI);
         rotateZ(QUARTER_PI);
@@ -219,22 +237,24 @@
         texture(textureImg);
         noStroke();
         sphere(planetSize);
+        pop();
 
         // Simple glow effect
 
-        // Draw moons
+        // Draw moons and their orbits
+        for (let i = 0; i < 4; i++) {
+          let moon = moons[i];
+          let moonTexture = moonTextures[i];
+          drawMoonOrbit(moon);
+
+          push(); // Add push() to isolate the moon rotation transformation
+          drawMoon(moon, moonTexture);
+          pop(); // Add pop() to isolate the moon rotation transformation
+        }
+
+        // Update moon angles
         for (let moon of moons) {
-          push();
-          let moonOrbitRadius = moon.distance;
-          let x = moonOrbitRadius * cos(moon.angle + angle);
-          let z = moonOrbitRadius * sin(moon.angle + angle);
-          translate(x, 0, z);
-          rotateY(initialRotationY + angle); // Add this line
-          rotateX(HALF_PI); // Modify this line
-          texture(moonTextures[moons.indexOf(moon)]);
-          sphere(moon.radius);
-          pop();
-          moon.angle += moon.speed; // Update the moon's angle using its speed property
+          moon.angle += moon.speed;
         }
       }
     </script>

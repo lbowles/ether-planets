@@ -21,9 +21,10 @@
       let hasRings;
       let rings = [];
       let ringSize;
+      let numRingParticles;
 
       function setup() {
-        createCanvas(400, 400, WEBGL);
+        createCanvas(500, 500, WEBGL);
         let numColors = 5;
         let randomPalette = [];
         for (let i = 0; i < numColors; i++) {
@@ -53,17 +54,18 @@
           });
         }
 
-        planetSize = random(50, 250);
-        glowSize = planetSize + random(10, 40);
+        planetSize = random(30, 190);
+        glowSize = planetSize + random(10, 20);
         initialRotationX = random(360);
         initialRotationY = 148;
 
         // Determine if the planet should have rings
         hasRings = random() < 0.5; // 50% chance
+        numRingParticles = random(400, 1500);
         if (hasRings) {
           ringSize = random(planetSize * 1.5, planetSize * 2);
           // Generate particles for the rings
-          for (let i = 0; i < 1000; i++) {
+          for (let i = 0; i < numRingParticles; i++) {
             let theta = random(TWO_PI);
             let ringRadius = random(ringSize * 0.7, ringSize);
             rings.push({
@@ -87,9 +89,8 @@
             let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2);
             let u = (cos(lat) * cos(lon) + 1) / 2;
             let v = (cos(lat) * sin(lon) + 1) / 2;
-
             let elevation = textureImg.noise(u * 4, v * 4);
-            let col = color(0);
+            let col = color(255);
             let found = false;
             for (let i = 0; i < elevationThresholds.length; i++) {
               if (elevation < elevationThresholds[i]) {
@@ -152,7 +153,7 @@
             let rotatedParticlePos = particlePos.copy().rotate(-angle);
             let distToLight = rotatedParticlePos.dist(lightPos);
             let lightEffect = 1 - pow(distToLight / (planetSize * 2), 1.5);
-            let particleColor = color(255, 255, 255, 255 * lightEffect);
+            let particleColor = color(120, 120, 120, 255 * lightEffect);
             stroke(particleColor);
             strokeWeight(ringParticle.radius);
             point(ringParticle.x, ringParticle.y, ringParticle.z);

@@ -86,8 +86,8 @@
         }
 
         // Generate moons
-        numMoons = floor(random(0, 4)); // Up to 3 moons
-        for (let i = 0; i < 4; i++) {
+        numMoons = floor(random(0, 5)); // Up to 3 moons
+        for (let i = 0; i < numMoons; i++) {
           let moonRadius = random(planetSize * 0.05, planetSize * 0.21);
 
           let minMoonDistance = hasRings ? ringSize * 1.2 : planetSize * 1.5; // Change minimum distance based on presence of rings
@@ -272,7 +272,7 @@
         pop();
 
         // Draw moons and their orbits
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < numMoons; i++) {
           let moon = moons[i];
           let moonTexture = moonTextures[i];
           push(); // Add push() to isolate the moon rotation transformation

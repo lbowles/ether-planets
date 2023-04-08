@@ -27,6 +27,8 @@
       let moons = [];
       let moonTextures = [];
       let planetType;
+      let hasAtmosphere;
+      let atmosphereColor;
 
       function setup() {
         createCanvas(500, 500, WEBGL);
@@ -106,6 +108,15 @@
             orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
           });
         }
+
+        hasAtmosphere = random() < 0.5; // 50% chance
+        if (hasAtmosphere) {
+          let r = random(0, 255);
+          let g = random(0, 255);
+          let b = random(0, 255);
+          let a = random(30, 100); // Adjust the range of transparency as needed
+          atmosphereColor = color(r, g, b, a);
+        }
       }
 
       function generateTexture(elevationThresholds, colors, planetType) {
@@ -142,6 +153,15 @@
               col = colors[colors.length - 1]; // Assign the last color if elevation is greater than the last threshold
             }
             textureImg.set(x, y, col);
+            // Choose a random color from the palette for the atmosphere color
+            if (
+              hasAtmosphere &&
+              x === textureImg.width / 2 &&
+              y === textureImg.height / 2
+            ) {
+              let atmosphereIndex = floor(random(colors.length));
+              atmosphereColor = colors[atmosphereIndex];
+            }
           }
         }
         textureImg.updatePixels();
@@ -175,6 +195,14 @@
         translate(moon.distance, 0, 0);
         rotateZ(radians(95));
         sphere(moon.radius);
+        pop();
+      }
+
+      function drawAtmosphere() {
+        push();
+        fill(atmosphereColor);
+        noStroke();
+        sphere(planetSize * 1.05); // Change the size multiplier as needed
         pop();
       }
 
@@ -244,8 +272,6 @@
         sphere(planetSize);
         pop();
 
-        // Simple glow effect
-
         // Draw moons and their orbits
         for (let i = 0; i < 4; i++) {
           let moon = moons[i];
@@ -253,6 +279,10 @@
           push(); // Add push() to isolate the moon rotation transformation
           drawMoon(moon, moonTexture);
           pop(); // Add pop() to isolate the moon rotation transformation
+        }
+        // Draw atmosphere if the planet has one
+        if (hasAtmosphere) {
+          drawAtmosphere();
         }
 
         // Update moon angles

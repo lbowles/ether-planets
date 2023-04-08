@@ -7,3 +7,9 @@ typechain
 #Hardhat files
 cache
 artifacts
+types
+
+deployments/localhost
+.DS_Store
+
+.gas-used

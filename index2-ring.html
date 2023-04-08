@@ -30,7 +30,7 @@
       let atmosphereColor;
 
       function setup() {
-        randomSeed(1233345);
+        randomSeed(12345);
         createCanvas(500, 500, WEBGL);
         let numColors = 5;
         let randomPalette = [];
@@ -87,7 +87,7 @@
 
         // Generate moons
         numMoons = floor(random(0, 4)); // Up to 3 moons
-        for (let i = 0; i < numMoons; i++) {
+        for (let i = 0; i < 4; i++) {
           let moonRadius = random(planetSize * 0.05, planetSize * 0.21);
 
           let minMoonDistance = hasRings ? ringSize * 1.2 : planetSize * 1.5; // Change minimum distance based on presence of rings

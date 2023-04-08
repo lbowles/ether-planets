@@ -123,6 +123,7 @@
 
         // Set up point light
         pointLight(255, 100, 255, 400, 400, 1200);
+
         // Draw stars
         push();
         translate(0, 0, -1200);
@@ -135,10 +136,24 @@
 
         // Draw rings if the planet has them
         if (hasRings) {
+          let lightPosX = 0;
+          let lightPosY = -planetSize * 1.5;
+          let lightPosZ = 0;
+          let lightPos = createVector(lightPosX, lightPosY, lightPosZ);
+
           rotateY(initialRotationY + angle);
           rotateX(HALF_PI);
           for (let ringParticle of rings) {
-            stroke(255);
+            let particlePos = createVector(
+              ringParticle.x,
+              ringParticle.y,
+              ringParticle.z
+            );
+            let rotatedParticlePos = particlePos.copy().rotate(-angle);
+            let distToLight = rotatedParticlePos.dist(lightPos);
+            let lightEffect = 1 - pow(distToLight / (planetSize * 2), 1.5);
+            let particleColor = color(255, 255, 255, 255 * lightEffect);
+            stroke(particleColor);
             strokeWeight(ringParticle.radius);
             point(ringParticle.x, ringParticle.y, ringParticle.z);
           }
@@ -148,10 +163,10 @@
         let maxAngle = radians(10); // Convert 5 degrees to radians
         let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle);
         let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle);
-        let camX = fixedDistance * sin(mouseYRatio);
-        let camY = fixedDistance * cos(mouseXRatio);
-        let camZ = fixedDistance;
-        camera(400, -100, 400, 0, 0, 0, 0, 1, 0);
+        let camX = 400 * sin(mouseYRatio);
+        let camY = -100 * cos(mouseXRatio);
+        let camZ = 400;
+        camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
         // Rotate planet
         rotateY(initialRotationY + angle);

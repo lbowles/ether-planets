@@ -31,7 +31,7 @@
 
       function setup() {
         randomSeed(1233345);
-        createCanvas(500, 500, WEBGL);
+        createCanvas(1000, 500, WEBGL);
         let numColors = 5;
         let randomPalette = [];
         for (let i = 0; i < numColors; i++) {
@@ -250,7 +250,7 @@
         }
 
         let fixedDistance = 450;
-        let maxAngle = radians(10);
+        let maxAngle = radians(30);
         let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle);
         let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle);
         let camX = 400 * sin(mouseYRatio);

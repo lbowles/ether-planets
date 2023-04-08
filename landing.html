@@ -30,8 +30,7 @@
       let atmosphereColor;
 
       function setup() {
-        randomSeed(12345);
-        createCanvas(500, 500, WEBGL);
+        createCanvas(windowWidth, windowHeight, WEBGL);
         let numColors = 5;
         let randomPalette = [];
         for (let i = 0; i < numColors; i++) {
@@ -48,16 +47,16 @@
         };
 
         // Generate stars
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 2000; i++) {
           stars.push({
-            x: random(-width * 5, width * 5),
-            y: random(-height * 5, height * 5),
-            z: random(width * 5),
+            x: random(-500 * 5, 500 * 5),
+            y: random(-500 * 5, 500 * 6),
+            z: random(500 * 8),
             radius: random(0.5, 2),
           });
         }
 
-        planetSize = random(30, 170);
+        planetSize = random(30, 70);
         initialRotationX = random(360);
         initialRotationY = 148;
         planetType = random() < 0.5 ? "gas" : "solid";
@@ -86,7 +85,7 @@
         }
 
         // Generate moons
-        numMoons = floor(random(0, 5)); // Up to 3 moons
+        numMoons = floor(random(1, 5)); // Up to 3 moons
         for (let i = 0; i < numMoons; i++) {
           let moonRadius = random(planetSize * 0.05, planetSize * 0.21);
 
@@ -116,6 +115,10 @@
           let a = random(30, 100); // Adjust the range of transparency as needed
           atmosphereColor = color(r, g, b, a);
         }
+      }
+
+      function windowResized() {
+        resizeCanvas(windowWidth, windowHeight);
       }
 
       function generateTexture(elevationThresholds, colors, planetType) {

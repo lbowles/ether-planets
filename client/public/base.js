@@ -21,7 +21,7 @@ let moonTextures = []
 
 function setup() {
   randomSeed(seed)
-  createCanvas(500, 500, WEBGL)
+  createCanvas(windowWidth, windowHeight, WEBGL)
   colorMode(HSL, 360, 100, 100)
 
   let numColors = 5
@@ -41,9 +41,9 @@ function setup() {
   // Generate stars
   for (let i = 0; i < 500; i++) {
     stars.push({
-      x: random(-width * 5, width * 5),
-      y: random(-height * 5, height * 5),
-      z: random(width * 5),
+      x: random(min(-3000, -width * 1.5), floor(1000, width * 1.5)),
+      y: random(min(-3000, -height * 1.5), floor(1000, height * 1.5)),
+      z: random(width * 1.5),
       radius: random(0.5, 2),
     })
   }
@@ -77,6 +77,9 @@ function setup() {
       orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
     })
   }
+}
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight)
 }
 
 function generateExtraterrestrialColorPalette(baseHue) {
@@ -213,13 +216,13 @@ function draw() {
   }
   pop()
 
-  let maxAngle = radians(10)
+  let maxAngle = radians(20)
   let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle)
   let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle)
   let camX = 400 * sin(mouseXRatio)
   let camY = -100 * cos(mouseYRatio)
   let camZ = 400
-  camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0)
+  camera(camX, camY, camZ, 3, 0, 0, 0, 1, 0)
 
   // Rotate planet
   push() // Add push() to isolate the rotation transformation

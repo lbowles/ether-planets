@@ -2,6 +2,11 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import dynamic from "next/dynamic";
+// import PlanetGenerator from "./components/P5Background";
+const PlanetGenerator = dynamic(() => import("./components/P5Background"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
   return (
@@ -17,6 +22,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <ConnectButton />
+        <PlanetGenerator />
       </main>
 
       <footer className={styles.footer}>

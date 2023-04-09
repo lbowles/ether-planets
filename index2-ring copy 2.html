@@ -29,7 +29,7 @@
       let ringTextureImg
 
       function setup() {
-        //randomSeed(1767)
+        randomSeed(1767)
         createCanvas(500, 500, WEBGL)
         let numColors = 5
         let randomPalette = []
@@ -66,6 +66,7 @@
         if (hasRings) {
           ringSize = random(planetSize * 1.5, planetSize * 1.7)
           let baseColor = random(randomColorPalette.colors) // Select a random color from the planet's color palette
+          console.log(baseColor)
           ringTextureImg = generateRingTexture(baseColor) // Pass the base color to generateRingTexture()
         }
 
@@ -79,7 +80,6 @@
           let maxMoonDistance = planetSize * 8
           let moonDistance = random(minMoonDistance, maxMoonDistance)
 
-          let randomRingParticle = random(rings) // Get a random ring particle
           let moonAngle = random(TWO_PI) // Change this line to add
           let moonSpeed = random(0.001, 0.011) // Add random speed property
           moonTextures.push(generateMoonTexture())
@@ -101,6 +101,7 @@
 
         for (let i = 0; i < numStripes; i++) {
           let brightnessAdjustment = random(-30, 100)
+          console.log(red(baseColor))
           let adjustedColor = color(
             red(baseColor) + brightnessAdjustment,
             green(baseColor) + brightnessAdjustment,
@@ -186,9 +187,6 @@
 
       function draw() {
         background(0)
-        // Set up ambient light
-        ambientLight(100)
-        ambientMaterial(0)
 
         // Set up point light
         pointLight(255, 255, 255, 400, -10, 1200)
@@ -228,7 +226,6 @@
         if (hasRings) {
           push()
           rotateX(PI / 2) // Rotate the rings to lie on the XY plane
-          console.log(PI / 2)
           pointLight(255, 255, 255, 400, -400, 1200)
           scale(1, 1, 0.01) // Scale the Z-axis
           texture(ringTextureImg) // Apply the ring texture

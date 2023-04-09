@@ -24,8 +24,7 @@ class PlanetGenerator extends Component {
     this.moons = []
     this.moonTextures = []
     this.planetType
-    this.hasAtmosphere
-    this.atmosphereColor
+    this.ringTextureImg
   }
   componentDidMount() {
     if (typeof window !== "undefined") {
@@ -39,6 +38,7 @@ class PlanetGenerator extends Component {
   }
 
   setup = (p5, canvasParentRef) => {
+    p5.randomSeed(1767)
     if (typeof window === "undefined") {
       return // do nothing if window is not defined
     }
@@ -68,7 +68,7 @@ class PlanetGenerator extends Component {
       })
     }
 
-    this.planetSize = p5.random(30, 70)
+    this.planetSize = p5.random(20, 70)
     this.initialRotationX = p5.random(360)
     this.initialRotationY = 148
     this.planetType = p5.random() < 0.5 ? "gas" : "solid"
@@ -80,33 +80,23 @@ class PlanetGenerator extends Component {
     )
 
     // Determine if the planet should have rings
-    this.hasRings = p5.random() < 0.5 // 50% chance
-    this.numRingParticles = p5.random(400, 1500)
+    this.hasRings = true // 50% chance
     if (this.hasRings) {
-      this.ringSize = p5.random(this.planetSize * 1.5, this.planetSize * 2)
-      // Generate particles for the rings
-      for (let i = 0; i < this.numRingParticles; i++) {
-        let theta = p5.random(p5.TWO_PI)
-        let ringRadius = p5.random(this.ringSize * 0.7, Math.max(this.ringSize, 80))
-        this.rings.push({
-          x: ringRadius * p5.cos(theta),
-          y: ringRadius * p5.sin(theta),
-          z: p5.random(-5, 5),
-          radius: p5.random(0.1, 2),
-        })
-      }
+      this.ringSize = p5.random(this.planetSize * 1.5, this.planetSize * 1.7)
+      let baseColor = p5.random(randomColorPalette.colors) // Select a random color from the planet's color palette
+      console.log(baseColor)
+      this.ringTextureImg = this.generateRingTexture(p5, baseColor) // Pass the base color to generateRingTexture()
     }
 
     // Generate moons
-    this.numMoons = Math.floor(p5.random(1, 5)) // Up to 3 moons
+    this.numMoons = Math.floor(p5.random(1, 4)) // Up to 3 moons
     for (let i = 0; i < this.numMoons; i++) {
-      let moonRadius = p5.random(this.planetSize * 0.05, this.planetSize * 0.21)
+      let moonRadius = p5.random(this.planetSize * 0.08, this.planetSize * 0.21)
 
       let minMoonDistance = this.hasRings ? this.ringSize * 1.2 : this.planetSize * 1.5 // Change minimum distance based on presence of rings
       let maxMoonDistance = this.planetSize * 8
       let moonDistance = p5.random(minMoonDistance, maxMoonDistance)
 
-      let randomRingParticle = p5.random(this.rings) // Get a random ring particle
       let moonAngle = p5.random(p5.TWO_PI) // Change this line to add
       let moonSpeed = p5.random(0.001, 0.011) // Add random speed property
       this.moonTextures.push(this.generateMoonTexture(p5))
@@ -119,16 +109,6 @@ class PlanetGenerator extends Component {
         orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
       })
     }
-
-    this.hasAtmosphere = p5.random() < 0.5 // 50% chance
-    if (this.hasAtmosphere) {
-      let r = p5.random(0, 255)
-      let g = p5.random(0, 255)
-      let b = p5.random(0, 255)
-      let a = p5.random(30, 100) // Adjust the range of transparency as needed
-      this.atmosphereColor = p5.color(r, g, b, a)
-    }
-
     this.loadedCount++
   }
 
@@ -139,8 +119,31 @@ class PlanetGenerator extends Component {
     p5.resizeCanvas(p5.windowWidth, p5.windowHeight)
   }
 
+  generateRingTexture = (p5, baseColor) => {
+    let textureImg = p5.createGraphics(248, 124)
+    let numStripes = p5.random(5, 15)
+    let stripeHeight = textureImg.height / numStripes
+
+    for (let i = 0; i < numStripes; i++) {
+      let brightnessAdjustment = p5.random(-30, 100)
+      console.log(p5.red(baseColor), brightnessAdjustment)
+      let adjustedColor = p5.color(
+        p5.red(baseColor) + brightnessAdjustment,
+        p5.green(baseColor) + brightnessAdjustment,
+        p5.blue(baseColor) + brightnessAdjustment,
+        100,
+      )
+      textureImg.fill(adjustedColor)
+      textureImg.noStroke()
+      textureImg.rect(0, i * stripeHeight, textureImg.width, stripeHeight)
+    }
+
+    textureImg.updatePixels()
+    return textureImg
+  }
+
   generateTexture = (p5, elevationThresholds, colors, planetType) => {
-    let textureImg = p5.createGraphics(1024, 512)
+    let textureImg = p5.createGraphics(248, 124)
     textureImg.noiseSeed(p5.random(1000))
 
     let noiseScale = this.planetType === "gas" ? 1 : 4
@@ -171,11 +174,6 @@ class PlanetGenerator extends Component {
           col = colors[colors.length - 1] // Assign the last color if elevation is greater than the last threshold
         }
         textureImg.set(x, y, col)
-        // Choose a random color from the palette for the atmosphere color
-        if (this.hasAtmosphere && x === textureImg.width / 2 && y === textureImg.height / 2) {
-          let atmosphereIndex = Math.floor(p5.random(colors.length))
-          this.atmosphereColor = colors[atmosphereIndex]
-        }
       }
     }
     textureImg.updatePixels()
@@ -183,7 +181,7 @@ class PlanetGenerator extends Component {
   }
 
   generateMoonTexture = (p5) => {
-    let textureImg = p5.createGraphics(512, 256)
+    let textureImg = p5.createGraphics(62, 31)
     textureImg.noiseSeed(p5.random(1000))
 
     for (let x = 0; x < textureImg.width; x++) {
@@ -212,22 +210,12 @@ class PlanetGenerator extends Component {
     p5.pop()
   }
 
-  // drawAtmosphere = (p5) => {
-  //   p5.push()
-  //   p5.fill(this.atmosphereColor)
-  //   p5.noStroke()
-  //   p5.sphere(this.planetSize * 1.05) // Change the size multiplier as needed
-  //   p5.pop()
-  // }
-
   draw = (p5) => {
     p5.background(0)
     // Set up ambient light
-    // p5.ambientLight(100)
-    // p5.ambientMaterial(0)
 
     // Set up point light
-    p5.pointLight(255, 255, 255, 400, 400, 1200)
+    p5.pointLight(255, 255, 255, 400, -10, 1200)
 
     // Draw stars
     p5.push()
@@ -238,27 +226,6 @@ class PlanetGenerator extends Component {
       p5.point(star.x, star.y, star.z)
     }
     p5.pop()
-
-    // Draw rings if the planet has them
-    if (this.hasRings) {
-      let lightPosX = 0
-      let lightPosY = -this.planetSize * 1.5
-      let lightPosZ = 0
-      let lightPos = p5.createVector(lightPosX, lightPosY, lightPosZ)
-
-      p5.rotateY(this.initialRotationY + this.angle)
-      p5.rotateX(p5.HALF_PI)
-      for (let ringParticle of this.rings) {
-        let particlePos = p5.createVector(ringParticle.x, ringParticle.y, ringParticle.z)
-        let rotatedParticlePos = particlePos.copy().rotate(-this.angle)
-        let distToLight = rotatedParticlePos.dist(lightPos)
-        let lightEffect = 1 - Math.pow(distToLight / (this.planetSize * 2), 1.5)
-        let particleColor = p5.color((120, 120, 120, 255 * lightEffect))
-        p5.stroke(particleColor)
-        p5.strokeWeight(ringParticle.radius)
-        p5.point(ringParticle.x, ringParticle.y, ringParticle.z)
-      }
-    }
 
     let fixedDistance = 450
     let maxAngle = p5.radians(10)
@@ -281,10 +248,19 @@ class PlanetGenerator extends Component {
     p5.noStroke()
     p5.sphere(this.planetSize)
     p5.pop()
-    // Draw atmosphere if the planet has one
-    // if (this.hasAtmosphere) {
-    //   this.drawAtmosphere(p5)
-    // }
+
+    if (this.hasRings) {
+      p5.push()
+      p5.rotateX(p5.PI / 2) // Rotate the rings to lie on the XY plane
+      p5.pointLight(255, 255, 255, 400, -400, 1200)
+      p5.fill(0)
+      p5.scale(1, 1, 0.01) // Scale the Z-axis
+      p5.texture(this.ringTextureImg) // Apply the ring texture
+      p5.noStroke()
+      p5.torus(this.ringSize, this.planetSize * 0.3) // Draw the rings using torus function
+      p5.pop()
+    }
+
     // Draw moons and their orbits
     for (let i = 0; i < this.numMoons; i++) {
       let moon = this.moons[i]

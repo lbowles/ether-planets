@@ -164,6 +164,10 @@ contract Planets is Base {
     settings.planetType = PlanetType(planetType);
     settings.vars[4] = varPlanetType;
 
+    (uint256 planetColor, bytes memory varPlanetColor) = genVar(_tokenId, "baseHue", 0, 360);
+    settings.hue = planetColor;
+    settings.vars[5] = varPlanetColor;
+
     return settings;
   }
 
@@ -194,7 +198,9 @@ contract Planets is Base {
         ",",
         buildTrait("Number of Moons", utils.uint2str(settings.numMoons)),
         ",",
-        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Solid" : "Gas"),
+        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Rocky" : "Gas"),
+        ",",
+        buildTrait("Planet Color", utils.getColorName(settings.hue)),
         "]"
       );
   }

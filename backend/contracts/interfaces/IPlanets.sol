@@ -13,5 +13,6 @@ struct Settings {
   bool hasRings;
   uint256 numMoons;
   PlanetType planetType;
-  bytes[5] vars;
+  uint256 hue;
+  bytes[6] vars;
 }

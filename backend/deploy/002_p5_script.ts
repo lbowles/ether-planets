@@ -33,7 +33,6 @@ async function generateStoreScriptTxs(storageContract: ScriptyStorage, name: str
   const buffer = Buffer.from(minified)
   const compressed = gzipSync(new Uint8Array(buffer))
   const b64encoded = Buffer.from(compressed).toString("base64")
-  console.log(b64encoded)
   const scriptChunks = chunkSubstr(b64encoded, 24575)
 
   const txs: PopulatedTransaction[] = []
@@ -71,7 +70,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Execute storage transactions
   for (const tx of txs) {
-    console.log(`Gas limit: ${tx.gasLimit?.toString()}`)
     await rawTx({ ...tx, to: tx.to!, from: deployer })
   }
 }

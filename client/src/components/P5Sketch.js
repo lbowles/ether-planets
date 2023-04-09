@@ -1,0 +1,272 @@
+// components/P5Sketch.js
+import React from "react"
+
+const P5Sketch = () => {
+  const sketch = `
+  let seed = 12345
+  let planetSize = 45 // random(30, 170)
+  let hasRings = true // random() < 0.5 // 50% chance
+  let numMoons = 1 // floor(random(0, 5)) // Up to 3 moons
+  let planetType = 0 // 0 = gas, 1 = solid
+  let hasAtmosphere = true // random() < 0.5 // 50% chance
+  let colors = []
+
+  let angle = 0
+  let textureImg
+  let stars = []
+  let initialRotationX
+  let initialRotationY
+  let rings = []
+  let ringSize
+  let numRingParticles
+  let moonSize
+  let moons = []
+  let moonTextures = []
+  let ringTextureImg
+
+  function setup() {
+    //randomSeed(seed)
+    createCanvas(windowWidth, windowHeight, WEBGL)
+    let numColors = 5
+    let randomPalette = []
+    for (let i = 0; i < numColors; i++) {
+      randomPalette.push(color(random(255), random(255), random(255)))
+    }
+    let thresholds = []
+    for (let i = 0; i < numColors - 1; i++) {
+      thresholds.push(random())
+    }
+    thresholds.sort()
+    let randomColorPalette = {
+      thresholds: thresholds,
+      colors: randomPalette,
+    }
+
+    // Generate stars
+    for (let i = 0; i < 500; i++) {
+      stars.push({
+        x: random(-width*1.5, width*1.5),
+        y: random(-height*1.5, height*1.5),
+        z: random(width*1.5),
+        radius: random(0.5, 2),
+      })
+    }
+
+    planetSize = random(20, 50)
+    initialRotationX = random(360)
+    initialRotationY = 148
+    planetType = random() < 0.5 ? "gas" : "solid"
+    textureImg = generateTexture(randomColorPalette.thresholds, randomColorPalette.colors, planetType)
+
+    hasRings = true // 50% chance of having rings
+    if (hasRings) {
+      ringSize = random(planetSize * 1.5, planetSize * 1.7)
+      let baseColor = random(randomColorPalette.colors) // Select a random color from the planet's color palette
+      ringTextureImg = generateRingTexture(baseColor) // Pass the base color to generateRingTexture()
+    }
+
+    // Generate moons
+    numMoons = random(1, random(4)) // Up to 3 moons
+    for (let i = 0; i < numMoons; i++) {
+      let moonRadius = random(planetSize * 0.08, planetSize * 0.21)
+
+      let minMoonDistance = hasRings ? ringSize * 1.2 : planetSize * 1.5 // Change minimum distance based on presence of rings
+      let maxMoonDistance = planetSize * 8
+      let moonDistance = random(minMoonDistance, maxMoonDistance)
+
+      let moonAngle = random(TWO_PI) // Change this line to add
+      let moonSpeed = random(0.001, 0.011) // Add random speed property
+      moonTextures.push(generateMoonTexture())
+      let orbitAngle = radians(random(-15, 15))
+      moons.push({
+        radius: moonRadius,
+        distance: moonDistance,
+        angle: moonAngle,
+        speed: moonSpeed, // Add speed property to moon object
+        orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
+      })
+    }
+  }
+  function windowResized() {
+    resizeCanvas(windowWidth, windowHeight)
+  }
+
+  function generateRingTexture(baseColor) {
+    let textureImg = createGraphics(248, 124)
+    let numStripes = random(5, 15)
+    let stripeHeight = textureImg.height / numStripes
+
+    for (let i = 0; i < numStripes; i++) {
+      let brightnessAdjustment = random(-30, 100)
+      let adjustedColor = color(
+        red(baseColor) + brightnessAdjustment,
+        green(baseColor) + brightnessAdjustment,
+        blue(baseColor) + brightnessAdjustment,
+        100,
+      )
+      textureImg.fill(adjustedColor)
+      textureImg.noStroke()
+      textureImg.rect(0, i * stripeHeight, textureImg.width, stripeHeight)
+    }
+
+    textureImg.updatePixels()
+    return textureImg
+  }
+
+  function generateTexture(elevationThresholds, colors, planetType) {
+    let textureImg = createGraphics(248, 124)
+    textureImg.noiseSeed(random(1000))
+
+    let noiseScale = planetType === "gas" ? 1 : 4
+
+    for (let x = 0; x < textureImg.width; x++) {
+      for (let y = 0; y < textureImg.height; y++) {
+        // Convert x and y to spherical coordinates
+        let lon = map(x, 0, textureImg.width, 0, TWO_PI)
+        let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2)
+        let u = (cos(lat) * cos(lon) + 1) / 2
+        let v = (cos(lat) * sin(lon) + 1) / 2
+        let elevation = textureImg.noise(u * noiseScale, v * noiseScale)
+        let col = color(255)
+        let found = false
+        for (let i = 0; i < elevationThresholds.length; i++) {
+          if (elevation < elevationThresholds[i]) {
+            col = lerpColor(
+              colors[i],
+              colors[i + 1],
+              (elevation - (i === 0 ? 0 : elevationThresholds[i - 1])) *
+                (1 / (elevationThresholds[i] - (i === 0 ? 0 : elevationThresholds[i - 1]))),
+            )
+            found = true
+            break
+          }
+        }
+        if (!found) {
+          col = colors[colors.length - 1] // Assign the last color if elevation is greater than the last threshold
+        }
+        textureImg.set(x, y, col)
+      }
+    }
+    textureImg.updatePixels()
+    return textureImg
+  }
+
+  function generateMoonTexture() {
+    let textureImg = createGraphics(62, 31)
+    textureImg.noiseSeed(random(1000))
+
+    for (let x = 0; x < textureImg.width; x++) {
+      for (let y = 0; y < textureImg.height; y++) {
+        let lon = map(x, 0, textureImg.width, 0, TWO_PI)
+        let lat = map(y, 0, textureImg.height, -PI / 2, PI / 2)
+        let u = (cos(lat) * cos(lon) + 1) / 2
+        let v = (cos(lat) * sin(lon) + 1) / 2
+        let elevation = textureImg.noise(u * 4, v * 4)
+        let col = color(map(elevation, 0, 1, 20, 255))
+        textureImg.set(x, y, col)
+      }
+    }
+    textureImg.updatePixels()
+    return textureImg
+  }
+  function drawMoon(moon, moonTexture) {
+    push()
+    texture(moonTexture)
+    noStroke()
+    rotateX(moon.orbitAngle) // Add this line to apply the orbit angle
+    rotateY(moon.angle)
+    translate(moon.distance, 0, 0)
+    rotateZ(radians(95))
+    sphere(moon.radius)
+    pop()
+  }
+
+  function draw() {
+    background(0)
+
+    // Set up point light
+    pointLight(255, 255, 255, 400, -10, 1200)
+
+    // Draw stars
+    push()
+    translate(0, 0, -1200)
+    for (let star of stars) {
+      stroke(255)
+      strokeWeight(star.radius)
+      point(star.x, star.y, star.z)
+    }
+    pop()
+
+    let fixedDistance = 450
+    let maxAngle = radians(30)
+    let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle)
+    let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle)
+    let camX = 400 * sin(mouseXRatio)
+    let camY = -100 * cos(mouseXRatio)
+    let camZ = 400
+    camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0)
+
+    // Rotate planet
+    push() // Add push() to isolate the rotation transformation
+    rotateY(initialRotationY + angle)
+    rotateX(initialRotationX + QUARTER_PI)
+    rotateZ(QUARTER_PI)
+    angle += 0.005
+
+    // Draw planet
+    texture(textureImg)
+    noStroke()
+    sphere(planetSize)
+    pop()
+
+    if (hasRings) {
+      push()
+      rotateX(PI / 2) // Rotate the rings to lie on the XY plane
+      pointLight(255, 255, 255, 400, -400, 1200)
+      scale(1, 1, 0.01) // Scale the Z-axis
+      texture(ringTextureImg) // Apply the ring texture
+      noStroke()
+      torus(ringSize, planetSize * 0.3) // Draw the rings using torus function
+      pop()
+    }
+
+    // Draw moons and their orbits
+    for (let i = 0; i < numMoons; i++) {
+      let moon = moons[i]
+      let moonTexture = moonTextures[i]
+      push() // Add push() to isolate the moon rotation transformation
+      drawMoon(moon, moonTexture)
+      pop() // Add pop() to isolate the moon rotation transformation
+    }
+    // Update moon angles
+    for (let moon of moons) {
+      moon.angle += moon.speed
+    }
+  }
+  `
+
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src="https://cdn.jsdelivr.net/npm/p5"></script>
+          </head>
+          <style>
+            body {
+              background-color: black;
+            }
+          </style>
+          <body>
+            <script>${sketch}</script>
+          </body>
+         </html>
+        `,
+      }}
+    />
+  )
+}
+
+export default P5Sketch

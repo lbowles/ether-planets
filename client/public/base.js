@@ -222,7 +222,7 @@ function draw() {
   let camX = 400 * sin(mouseXRatio)
   let camY = -100 * cos(mouseYRatio)
   let camZ = 400
-  camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0)
+  camera(camX, camY, camZ, 3, 0, 0, 0, 1, 0)
 
   // Rotate planet
   push() // Add push() to isolate the rotation transformation

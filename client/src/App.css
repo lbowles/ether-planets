@@ -13,3 +13,8 @@
   border: none;
   z-index: 0; /* Set a lower z-index value for the iframe */
 }
+
+.front-content {
+  position: relative;
+  z-index: 1; /* Set a higher z-index value for the content in front of the iframe */
+}

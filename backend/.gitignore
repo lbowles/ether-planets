@@ -13,3 +13,5 @@ deployments/localhost
 .DS_Store
 
 .gas-used
+
+out.txt

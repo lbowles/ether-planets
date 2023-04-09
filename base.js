@@ -4,6 +4,7 @@
 // let numMoons = 2 // floor(random(0, 5)) // Up to 3 moons
 // let planetType = 0 // 0 = gas, 1 = solid
 // let colors = []
+// let baseHue = 123 // random(0, 360)
 
 let angle = 0
 let textureImg
@@ -21,11 +22,12 @@ let moonTextures = []
 function setup() {
   randomSeed(seed)
   createCanvas(500, 500, WEBGL)
+  colorMode(HSL, 360, 100, 100)
+
   let numColors = 5
-  let randomPalette = []
-  for (let i = 0; i < numColors; i++) {
-    randomPalette.push(color(random(255), random(255), random(255)))
-  }
+  let randomPalette = generateExtraterrestrialColorPalette(baseHue)
+
+  colorMode(RGB, 255)
   let thresholds = []
   for (let i = 0; i < numColors - 1; i++) {
     thresholds.push(random())
@@ -52,18 +54,17 @@ function setup() {
 
   if (hasRings) {
     ringSize = random(planetSize * 1.3, planetSize * 1.5)
-    ringTextureImg = generateRingTexture()
+    ringTextureImg = generateRingTexture(randomPalette)
   }
 
   // Generate moons
   for (let i = 0; i < numMoons; i++) {
     let moonRadius = random(planetSize * 0.05, planetSize * 0.21)
 
-    let minMoonDistance = hasRings ? ringSize * 1.2 : planetSize * 1.5 // Change minimum distance based on presence of rings
-    let maxMoonDistance = planetSize * 8
+    let minMoonDistance = hasRings ? ringSize * 1.3 : planetSize * 1.5 // Change minimum distance based on presence of rings
+    let maxMoonDistance = 300
     let moonDistance = random(minMoonDistance, maxMoonDistance)
 
-    let randomRingParticle = random(rings) // Get a random ring particle
     let moonAngle = random(TWO_PI) // Change this line to add
     let moonSpeed = random(0.001, 0.011) // Add random speed property
     moonTextures.push(generateMoonTexture())
@@ -78,13 +79,44 @@ function setup() {
   }
 }
 
-function generateRingTexture() {
+function generateExtraterrestrialColorPalette(baseHue) {
+  const colorPalette = []
+  const hueVariation = 5
+  const saturationBase = 60
+  const saturationVariation = 15
+  const lightnessBase = 40
+  const lightnessVariation = 10
+  const waterHue = 210
+  const waterSaturation = 70
+  const waterLightness = 50
+
+  for (let i = 0; i < 5; i++) {
+    let hue, saturation, lightness
+    if (i === 4) {
+      hue = waterHue
+      saturation = waterSaturation
+      lightness = waterLightness
+    } else {
+      hue = (baseHue + i * hueVariation) % 360
+      saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
+      lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
+    }
+    colorPalette.push(color(hue, saturation, lightness))
+  }
+
+  return colorPalette
+}
+
+function generateRingTexture(colors) {
   let textureImg = createGraphics(248, 124)
   let numStripes = random(5, 15)
   let stripeHeight = textureImg.height / numStripes
 
+  let mutedColors = [colors[2], colors[3]]
+
   for (let i = 0; i < numStripes; i++) {
-    let col = color(random(100, 255), random(100, 255), random(100, 255), 100) // Add the alpha value (100 in this case)
+    const col = mutedColors[i % mutedColors.length]
+    col.setAlpha(0.5)
     textureImg.fill(col)
     textureImg.noStroke()
     textureImg.rect(0, i * stripeHeight, textureImg.width, stripeHeight)
@@ -98,7 +130,7 @@ function generateTexture(elevationThresholds, colors, planetType) {
   let textureImg = createGraphics(248, 124)
   textureImg.noiseSeed(random(1000))
 
-  let noiseScale = planetType === "gas" ? 1 : 4
+  let noiseScale = planetType === 0 ? 1 : 4
 
   for (let x = 0; x < textureImg.width; x++) {
     for (let y = 0; y < textureImg.height; y++) {
@@ -181,7 +213,6 @@ function draw() {
   }
   pop()
 
-  let fixedDistance = 450
   let maxAngle = radians(10)
   let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle)
   let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle)
@@ -206,7 +237,6 @@ function draw() {
   if (hasRings) {
     push()
     rotateX(PI / 2) // Rotate the rings to lie on the XY plane
-    console.log(PI / 2)
     pointLight(255, 255, 255, 400, -400, 1200)
     scale(1, 1, 0.01) // Scale the Z-axis
     texture(ringTextureImg) // Apply the ring texture

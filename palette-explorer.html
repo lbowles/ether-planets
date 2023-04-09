@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extraterrestrial Color Palette Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .color-box {
+        width: 50px;
+        height: 50px;
+        display: inline-block;
+        border: 1px solid black;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Extraterrestrial Color Palette Generator</h1>
+    <form id="color-form">
+      <label for="hue">Base Hue:</label>
+      <input type="number" id="hue" name="hue" min="0" max="359" value="200" />
+      <button type="submit">Generate Palette</button>
+      <button type="button" id="randomize-hue">Randomize Hue</button>
+    </form>
+    <div id="palette-container"></div>
+    <script>
+      // ...Paste the generateExtraterrestrialColorPalette function here...
+      function generateExtraterrestrialColorPalette(baseHue) {
+        const colorPalette = []
+        const hueVariation = 5
+        const saturationBase = 60
+        const saturationVariation = 15
+        const lightnessBase = 40
+        const lightnessVariation = 10
+        const waterHue = 210
+        const waterSaturation = 70
+        const waterLightness = 50
+
+        for (let i = 0; i < 5; i++) {
+          let hue, saturation, lightness
+          if (i === 4) {
+            hue = waterHue
+            saturation = waterSaturation
+            lightness = waterLightness
+          } else {
+            hue = (baseHue + i * hueVariation) % 360
+            saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
+            lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
+          }
+          colorPalette.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`)
+        }
+
+        return colorPalette
+      }
+
+      document.getElementById("color-form").addEventListener("submit", function (event) {
+        event.preventDefault()
+        const hue = parseInt(document.getElementById("hue").value)
+
+        const colorPalette = generateExtraterrestrialColorPalette(hue)
+        const paletteContainer = document.getElementById("palette-container")
+        paletteContainer.innerHTML = ""
+
+        for (const color of colorPalette) {
+          const colorBox = document.createElement("div")
+          colorBox.className = "color-box"
+          colorBox.style.backgroundColor = color
+          paletteContainer.appendChild(colorBox)
+        }
+      })
+
+      document.getElementById("randomize-hue").addEventListener("click", function () {
+        const randomHue = Math.floor(Math.random() * 360)
+        document.getElementById("hue").value = randomHue
+      })
+    </script>
+  </body>
+</html>

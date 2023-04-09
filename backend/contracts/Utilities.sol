@@ -3,6 +3,28 @@
 pragma solidity ^0.8.12;
 
 library utils {
+  function getColorName(uint256 _hue) public pure returns (string memory) {
+    string[12] memory colorNames = [
+      "Red",
+      "Orange",
+      "Yellow",
+      "Chartreuse",
+      "Green",
+      "Spring",
+      "Cyan",
+      "Azure",
+      "Blue",
+      "Violet",
+      "Magenta",
+      "Rose"
+    ];
+
+    require(_hue <= 360, "Hue must be between 0 and 360");
+
+    uint256 colorIndex = (_hue * 12) / 360;
+    return colorNames[colorIndex];
+  }
+
   function assemblyKeccak(bytes memory _input) public pure returns (bytes32 x) {
     assembly {
       x := keccak256(add(_input, 0x20), mload(_input))

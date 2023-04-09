@@ -39,7 +39,7 @@ describe("Planets", function () {
     initialSupply = await etherPlanets.totalSupply()
   })
 
-  it("Should return the correct token URI for a given token ID", async function () {
+  it.only("Should return the correct token URI for a given token ID", async function () {
     // Mint a new token
     await etherPlanets.mint(1, { value: mintPrice })
 
@@ -52,10 +52,13 @@ describe("Planets", function () {
     // Decode base64 encoded json
     const json = JSON.parse(metadata.split("data:application/json,", 2)[1])
 
+    console.log(json.attributes)
+
     expect(json.name).to.equal(name)
     expect(json.description).to.equal(description)
     expect(json.image).to.contain("data:image/svg+xml;base64")
     expect(json.animation_url).to.contain("data%3Atext")
+    // expect(json.attributes)
 
     // // console.log(json.image)
     // const svg = Buffer.from(json.image.split(",")[1], "base64").toString()

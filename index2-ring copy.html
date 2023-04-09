@@ -30,7 +30,7 @@
       let ringWidth
 
       function setup() {
-        randomSeed(1767)
+        randomSeed(133767)
         createCanvas(500, 500, WEBGL)
         let numColors = 5
         let randomPalette = []
@@ -95,16 +95,41 @@
 
       function generateRingTexture() {
         let textureImg = createGraphics(248, 124)
-        textureImg.noiseSeed(random(1000))
+        textureImg.background(0, 0)
 
-        for (let x = 0; x < textureImg.width; x++) {
-          for (let y = 0; y < textureImg.height; y++) {
-            let elevation = textureImg.noise(x * 0.1, y * 0.1)
-            let col = color(255, 255, 255, map(elevation, 0, 1, 0, 255))
-            textureImg.set(x, y, col)
+        let numRings = 10 // Adjust this value to change the number of rings
+        let ringWidth = 5 // Adjust this value to change the width of the rings
+
+        // Define a list of colors for the rings
+        let ringColors = [
+          color(255, 150, 150),
+          color(150, 255, 150),
+          color(150, 150, 255),
+          color(255, 255, 150),
+          color(255, 150, 255),
+          color(150, 255, 255),
+        ]
+
+        for (let i = 0; i < numRings; i++) {
+          let radius = i * ringWidth
+          let col = ringColors[i % ringColors.length]
+          let gradientWidth = ringWidth * 2
+          let gradientImg = createGraphics(gradientWidth, textureImg.height)
+          for (let x = 0; x < gradientWidth; x++) {
+            let alpha = map(x, 0, gradientWidth, 255, 0)
+            let gradientColor = color(red(col), green(col), blue(col), 1)
+            gradientImg.stroke(gradientColor)
+            gradientImg.line(x, 0, x, textureImg.height)
           }
+          textureImg.image(
+            gradientImg,
+            textureImg.width / 2 - radius - ringWidth,
+            0,
+            radius * 2 + ringWidth * 2,
+            textureImg.height,
+          )
         }
-        textureImg.updatePixels()
+
         return textureImg
       }
 
@@ -177,10 +202,35 @@
       }
       function drawRing() {
         push()
-        texture(ringTexture)
+        texture(textureImg)
         noStroke()
-        rotateX(0)
-        cylinder(ringSize, 2, 200, 2)
+        rotateX(HALF_PI)
+        directionalLight(255, 255, 255, 1, 1, -1)
+        // Set the size of the inner and outer circles
+        let innerRingSize = planetSize * 1.2
+        //let outerRingSize = innerRingSize + ringSize
+        let outerRingSize = innerRingSize + ringSize
+
+        let detail = 200 // Increase this value for a smoother circle
+        let angleStep = TWO_PI / detail
+
+        beginShape(TRIANGLE_STRIP)
+        for (let i = 0; i <= detail; i++) {
+          let angle = angleStep * i
+          let u = i / detail
+
+          // Outer circle vertex
+          let x1 = outerRingSize * cos(angle)
+          let y1 = outerRingSize * sin(angle)
+          vertex(x1, y1, 0, u, 1)
+
+          // Inner circle vertex
+          let x2 = innerRingSize * cos(angle)
+          let y2 = innerRingSize * sin(angle)
+          vertex(x2, y2, 0, u, 0)
+        }
+        endShape()
+
         pop()
       }
 

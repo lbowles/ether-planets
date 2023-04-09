@@ -88,48 +88,48 @@
         // Generate ring texture
         hasRings = true // random() < 0.3  30% chance to have rings
         if (hasRings) {
-          ringSize = random(planetSize * 1.3, planetSize * 3)
+          ringSize = random((planetSize / 2) * 1.3, (planetSize / 2) * 1.2)
           ringTexture = generateRingTexture()
         }
       }
 
       function generateRingTexture() {
-        let textureImg = createGraphics(248, 124)
-        textureImg.background(0, 0)
+        let textureImg = createGraphics(100, 100)
+        textureImg.noStroke()
+        textureImg.background(0)
 
-        let numRings = 10 // Adjust this value to change the number of rings
-        let ringWidth = 5 // Adjust this value to change the width of the rings
+        // Set up colors
+        let innerColor = color(225, 225, 225, 50)
+        let outerColor = color(180, 180, 180, 50)
 
-        // Define a list of colors for the rings
-        let ringColors = [
-          color(255, 150, 150),
-          color(150, 255, 150),
-          color(150, 150, 255),
-          color(255, 255, 150),
-          color(255, 150, 255),
-          color(150, 255, 255),
-        ]
+        // Set up particle parameters
+        let numParticles = 500
+        let minRadius = ringWidth / 10
+        let maxRadius = ringWidth / 5
+        let maxAngle = TWO_PI
+        let minAngleStep = 0.01
+        let maxAngleStep = 0.05
 
-        for (let i = 0; i < numRings; i++) {
-          let radius = i * ringWidth
-          let col = ringColors[i % ringColors.length]
-          let gradientWidth = ringWidth * 2
-          let gradientImg = createGraphics(gradientWidth, textureImg.height)
-          for (let x = 0; x < gradientWidth; x++) {
-            let alpha = map(x, 0, gradientWidth, 255, 0)
-            let gradientColor = color(red(col), green(col), blue(col), 1)
-            gradientImg.stroke(gradientColor)
-            gradientImg.line(x, 0, x, textureImg.height)
-          }
-          textureImg.image(
-            gradientImg,
-            textureImg.width / 2 - radius - ringWidth,
-            0,
-            radius * 2 + ringWidth * 2,
-            textureImg.height,
-          )
+        // Draw particles
+        textureImg.fill(innerColor)
+        for (let i = 0; i < numParticles; i++) {
+          let x = random(-ringSize / 2, ringSize / 2)
+          let y = random(-ringSize / 2, ringSize / 2)
+          let radius = random(minRadius, maxRadius)
+          let angle = random(maxAngle)
+          let angleStep = random(minAngleStep, maxAngleStep)
+          textureImg.push()
+          textureImg.translate(textureImg.width / 2 + x, textureImg.height / 2 + y)
+          textureImg.rotate(angle)
+          textureImg.ellipse(0, 0, radius, radius / 2)
+          textureImg.pop()
         }
 
+        // Draw outer circle
+        textureImg.fill(outerColor)
+        textureImg.ellipse(textureImg.width / 2, textureImg.height / 2, ringWidth, ringWidth / 2)
+
+        textureImg.updatePixels()
         return textureImg
       }
 
@@ -202,7 +202,8 @@
       }
       function drawRing() {
         push()
-        texture(textureImg)
+        texture(textureImg) // Use the ringTexture instead of textureImg
+        //ambientMaterial(1, 44, 33) // Set the ambient material
         noStroke()
         rotateX(HALF_PI)
 

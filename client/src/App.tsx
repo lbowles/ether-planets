@@ -12,6 +12,7 @@ function App() {
         src={htmlFileURL}
         className="full-screen-iframe"
         style={{ border: "none" }}
+        scrolling="no"
       ></iframe>
     </div>
   )

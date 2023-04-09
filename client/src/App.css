@@ -1,5 +1,7 @@
 #app {
-  height: 100vh;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 
 .full-screen-iframe {
@@ -7,6 +9,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   border: none;
+  z-index: 0; /* Set a lower z-index value for the iframe */
 }

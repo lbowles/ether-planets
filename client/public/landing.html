@@ -51,9 +51,9 @@
         }
 
         // Generate stars
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 300; i++) {
           stars.push({
-            x: random(-width * 1.5, width * 1.5),
+            x: random(floor(-800, -width * 1.5), floor(800, width * 1.5)),
             y: random(-height * 1.5, height * 1.5),
             z: random(width * 1.5),
             radius: random(0.5, 2),

@@ -205,13 +205,11 @@
         texture(textureImg)
         noStroke()
         rotateX(HALF_PI)
-        directionalLight(255, 255, 255, 1, 1, -1)
-        // Set the size of the inner and outer circles
+
         let innerRingSize = planetSize * 1.2
-        //let outerRingSize = innerRingSize + ringSize
         let outerRingSize = innerRingSize + ringSize
 
-        let detail = 200 // Increase this value for a smoother circle
+        let detail = 200
         let angleStep = TWO_PI / detail
 
         beginShape(TRIANGLE_STRIP)
@@ -222,11 +220,15 @@
           // Outer circle vertex
           let x1 = outerRingSize * cos(angle)
           let y1 = outerRingSize * sin(angle)
+          let normal1 = createVector(x1, y1, 0).normalize()
+          normal(normal1.x, normal1.y, normal1.z)
           vertex(x1, y1, 0, u, 1)
 
           // Inner circle vertex
           let x2 = innerRingSize * cos(angle)
           let y2 = innerRingSize * sin(angle)
+          let normal2 = createVector(x2, y2, 0).normalize()
+          normal(normal2.x, normal2.y, normal2.z)
           vertex(x2, y2, 0, u, 0)
         }
         endShape()
@@ -261,6 +263,10 @@
         let camY = -100 * cos(mouseXRatio)
         let camZ = 400
         camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0)
+        // Draw ring if the planet has one
+        if (hasRings) {
+          drawRing()
+        }
 
         // Rotate planet
         push() // Add push() to isolate the rotation transformation
@@ -274,11 +280,6 @@
         noStroke()
         sphere(planetSize)
         pop()
-
-        // Draw ring if the planet has one
-        if (hasRings) {
-          drawRing()
-        }
 
         // Draw moons and their orbits
         for (let i = 0; i < numMoons; i++) {

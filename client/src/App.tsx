@@ -8,7 +8,10 @@ function App() {
   return (
     <div className="App">
       <div className="front-content">
-        <div className="text-white flex justify-center text-3xl pt-[25vh]">ΞPLANETS</div>
+        <div className="text-white flex justify-center text-3xl pt-[15vh] sm:pt-[25vh]">ΞPLANETS</div>
+        <div className="text-gray-400 flex justify-center text-lg pt-6 text-center ">
+          Fully on-chain, procedurally generated, 3D planets.
+        </div>
       </div>
       <iframe
         title="Embedded HTML File"

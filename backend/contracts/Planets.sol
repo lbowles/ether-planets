@@ -9,6 +9,9 @@ import "./interfaces/IPlanets.sol";
 import "./interfaces/IPlanetsRenderer.sol";
 import "scripty.sol/contracts/scripty/IScriptyBuilder.sol";
 
+// TODO: Remove
+import "hardhat/console.sol";
+
 contract Planets is Base {
   uint256 public immutable supply;
   address public thumbnailAddress;
@@ -37,10 +40,18 @@ contract Planets is Base {
 
     supply = _supply;
     price = _price;
+  }
 
-    // mint reserve of 20 for friends that helped
-    // and a few giveaways
-    _safeMint(msg.sender, 20, "");
+  /**
+   * @notice  Airdrops tokens to a list of recipients. Only callable by the contract owner.
+   * @param _recipients List of recipients to receive the airdrop.
+   * @param _quantity Quantity of tokens to airdrop to each recipient.
+   */
+  function airdrop(address[] calldata _recipients, uint256 _quantity) external payable onlyOwner {
+    if (totalMinted() + _recipients.length * _quantity > supply) revert SoldOut();
+    for (uint256 i = 0; i < _recipients.length; i++) {
+      _mint(_recipients[i], _quantity);
+    }
   }
 
   /**
@@ -74,7 +85,7 @@ contract Planets is Base {
    * @param _price - The new price.
    */
   function setPrice(uint256 _price) external onlyOwner {
-    price = price;
+    price = _price;
   }
 
   /**
@@ -82,8 +93,15 @@ contract Planets is Base {
    * @param _thumbnailAddress - Address of the thumbnail contract.
    */
   function setThumbnailAddress(address _thumbnailAddress) external onlyOwner {
-    if (_totalMinted() == supply) revert SoldOut();
     thumbnailAddress = _thumbnailAddress;
+  }
+
+  /**
+   * @notice Update renderer contract address
+   * @param _rendererAddress - Address of the renderer contract.
+   */
+  function setRendererAddress(address _rendererAddress) external onlyOwner {
+    rendererAddress = _rendererAddress;
   }
 
   /**
@@ -117,7 +135,7 @@ contract Planets is Base {
     uint256 _high
   ) internal pure returns (uint256 value, bytes memory varString) {
     value = utils.randomRange(_seed, _name, _low, _high);
-    varString = abi.encodePacked("var ", _name, '="', utils.uint2str(_seed), '";');
+    varString = abi.encodePacked("var ", _name, '="', utils.uint2str(value), '";');
   }
 
   /**
@@ -227,15 +245,15 @@ contract Planets is Base {
     bytes memory vars = buildVars(settings);
     string memory thumbnail = utils.encode(PlanetsThumbnail(thumbnailAddress).buildThumbnail(settings));
 
-    bytes memory animationUri = IPlanetsRenderer(rendererAddress).buildAnimationURI(settings, vars);
+    bytes memory animationUri = IPlanetsRenderer(rendererAddress).buildAnimationURI(vars);
 
     // TODO: Update this
     bytes memory json = abi.encodePacked(
       '{"name":"',
-      "Planet: #",
+      "EtherPlanet #",
       utils.uint2str(_tokenId),
       '", "description":"',
-      "All the models and code are compressed then stored, and retrieved from the blockchain.",
+      "Fully on-chain, procedurally generated, 3D planets.",
       '","image":"data:image/svg+xml;base64,',
       thumbnail,
       '","animation_url":"',

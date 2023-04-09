@@ -21,14 +21,10 @@ contract PlanetsRenderer is IPlanetsRenderer {
    * @dev I opted for the lazy dev approach and let scripty calculate the required buffersize
    *      This could be calculated and passed to the contract at any point prior to its use
    *      in `getHTMLWrappedURLSafe`
-   * @param _settings - Array of WrappedScriptRequest data
    * @param _vars - Variables to be injected
    * @return html - as bytes
    */
-  function buildAnimationURI(
-    Settings calldata _settings,
-    bytes calldata _vars
-  ) external view returns (bytes memory html) {
+  function buildAnimationURI(bytes calldata _vars) external view returns (bytes memory html) {
     // To build the html I use Scripty to manage all the annoying tagging and html construction
     // A combination of EthFS and Scripty is used for storage and this array stores the required
     // code data
@@ -86,7 +82,7 @@ contract PlanetsRenderer is IPlanetsRenderer {
     // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L642
     // <script type="text/javascript+gzip" src="data:text/javascript;base64,[cryptoCoaster.min.js.gz]"></script>
 
-    requests[3].name = "planets.min.js.gz"; // TODO
+    requests[3].name = "etherplanets-v1";
     requests[3].wrapType = 2;
     requests[3].contractAddress = scriptyStorageAddress;
 
@@ -102,8 +98,8 @@ contract PlanetsRenderer is IPlanetsRenderer {
     requests[4].wrapType = 1;
     requests[4].contractAddress = ethfsFileStorageAddress;
 
-    IScriptyBuilder iScriptyBuilder = IScriptyBuilder(scriptyBuilderAddress);
-    uint256 bufferSize = iScriptyBuilder.getBufferSizeForURLSafeHTMLWrapped(requests);
-    return iScriptyBuilder.getHTMLWrappedURLSafe(requests, bufferSize);
+    IScriptyBuilder IScriptyBuilder_ = IScriptyBuilder(scriptyBuilderAddress);
+    uint256 bufferSize = IScriptyBuilder_.getBufferSizeForURLSafeHTMLWrapped(requests);
+    return IScriptyBuilder_.getHTMLWrappedURLSafe(requests, bufferSize);
   }
 }

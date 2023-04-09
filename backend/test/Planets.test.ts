@@ -32,9 +32,9 @@ describe("Planets", function () {
 
   it("Should increase the total supply", async function () {
     let initialSupply = await etherPlanets.totalSupply()
-    await etherPlanets.connect(signers[1]).mint(20, { value: mintPrice.mul(20) })
+    await etherPlanets.connect(signers[1]).mint(10, { value: mintPrice.mul(10) })
 
-    expect(await etherPlanets.totalSupply()).to.equal(initialSupply.add(20))
+    expect(await etherPlanets.totalSupply()).to.equal(initialSupply.add(10))
 
     initialSupply = await etherPlanets.totalSupply()
   })
@@ -44,11 +44,13 @@ describe("Planets", function () {
     await etherPlanets.mint(1, { value: mintPrice })
 
     const tokenId = 1
-    const name = "Ether Planet #" + tokenId
-    const description = "Fully on-chain, 3D, procedurally generated planets."
+    const name = "EtherPlanet #" + tokenId
+    const description = "Fully on-chain, procedurally generated, 3D planets."
     const metadata = await etherPlanets.tokenURI(tokenId)
+
+    // console.log(metadata)
     // Decode base64 encoded json
-    const json = JSON.parse(metadata)
+    const json = JSON.parse(metadata.split("data:application/json,", 2)[1])
 
     expect(json.name).to.equal(name)
     expect(json.description).to.equal(description)
@@ -108,7 +110,10 @@ describe("Planets", function () {
     expect(await etherPlanets.price()).to.equal(newPrice)
 
     // Try to mint with old price
-    await expect(etherPlanets.mint(1, { value: currentPrice })).to.be.revertedWith("Insufficient fee")
+    await expect(etherPlanets.mint(1, { value: currentPrice })).to.be.revertedWithCustomError(
+      etherPlanets,
+      "InsufficientFunds",
+    )
 
     // Mint with new price
     await etherPlanets.mint(1, { value: newPrice })

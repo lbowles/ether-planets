@@ -2,7 +2,7 @@ import React from "react"
 import logo from "./logo.svg"
 import "./App.css"
 
-const htmlFileURL = process.env.PUBLIC_URL + "/landing.html"
+const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
 
 function App() {
   return (

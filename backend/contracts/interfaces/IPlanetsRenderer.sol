@@ -6,8 +6,5 @@ import "scripty.sol/contracts/scripty/IScriptyBuilder.sol";
 import "./IPlanets.sol";
 
 interface IPlanetsRenderer {
-  function buildAnimationURI(
-    Settings calldata _settings,
-    bytes calldata vars
-  ) external view returns (bytes memory html);
+  function buildAnimationURI(bytes calldata vars) external view returns (bytes memory html);
 }

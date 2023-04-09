@@ -5,19 +5,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre
   const { deploy } = deployments
 
-  const { deployer } = await getNamedAccounts()
+  const { deployer, scriptyBuilder, ethfsFileStorage, scriptyStorage } = await getNamedAccounts()
 
-  const utilities = await deployments.get("utils")
-
-  const scriptyBuilder = await deployments.get("ScriptyBuilder")
-  const ethfsFileStorage = await deployments.get("ContentStore")
-
-  await deploy("Renderer", {
+  await deploy("PlanetsRenderer", {
     from: deployer,
-    args: [ethfsFileStorage.address, scriptyBuilder.address],
+    args: [ethfsFileStorage, scriptyBuilder, scriptyStorage],
     log: true,
   })
 }
 export default func
 func.tags = ["Renderer"]
-func.dependencies = []
+func.dependencies = ["p5script"]

@@ -55,9 +55,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   const utilities = await deployments.get("utils")
-  const thumbnail = await deployments.get("Thumbnail")
-  const scriptyBuilder = await deployments.get("ScriptyBuilder")
-  const ethfsFileStorage = await deployments.get("ContentStore")
+  const thumbnail = await deployments.get("PlanetsThumbnail")
+  const renderer = await deployments.get("PlanetsRenderer")
 
   // string memory name,
   // string memory symbol,
@@ -73,15 +72,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     libraries: {
       utils: utilities.address,
     },
-    args: [
-      name,
-      symbol,
-      4242,
-      ethers.utils.parseEther("0.0042"),
-      ethfsFileStorage.address,
-      scriptyBuilder.address,
-      thumbnail.address,
-    ],
+    args: [name, symbol, 4242, ethers.utils.parseEther("0.0042"), thumbnail.address, renderer.address],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
     // gasPrice: ethers.utils.parseUnits("37", "gwei"),
   })

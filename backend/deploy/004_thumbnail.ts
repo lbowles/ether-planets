@@ -9,7 +9,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const utilities = await deployments.get("utils")
 
-  await deploy("Thumbnail", {
+  await deploy("PlanetsThumbnail", {
     from: deployer,
     libraries: {
       utils: utilities.address,

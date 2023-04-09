@@ -6,6 +6,8 @@
   "author": "Stephan Cilliers <5469870+stephancill@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "@node-minify/babel-minify": "^8.0.5",
+    "@node-minify/core": "^8.0.5",
     "@nomiclabs/hardhat-ethers": "^2.2.2",
     "@openzeppelin/contracts": "^4.8.2",
     "@typechain/ethers-v5": "^9.0.0",
@@ -13,13 +15,16 @@
     "closedsea": "^1.0.0",
     "erc721a": "^4.2.3",
     "ethers": "^5.0.0",
+    "fflate": "^0.7.4",
     "hardhat": "^2.13.0",
     "scripty.sol": "^1.0.2",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
     "@types/chai": "^4.3.4",
+    "@types/minify": "^9.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",

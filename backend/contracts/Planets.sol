@@ -10,41 +10,33 @@ import "./interfaces/IPlanetsRenderer.sol";
 import "scripty.sol/contracts/scripty/IScriptyBuilder.sol";
 
 contract Planets is Base {
-  address public immutable _ethfsFileStorageAddress;
-  address public immutable _scriptyBuilderAddress;
-  uint256 public immutable _supply;
-  address public _thumbnailAddress;
-  address public _rendererAddress;
+  uint256 public immutable supply;
+  address public thumbnailAddress;
+  address public rendererAddress;
 
-  uint256 public _price;
-  bool public _isOpen;
+  uint256 public price;
+  bool public isOpen;
 
   error MintClosed();
-  error ContractMinter();
   error SoldOut();
-  error GreedyMinter();
   error InsufficientFunds();
   error WalletMax();
   error TokenDoesntExist();
-  error InvalidSignature();
+  error RefundFailed();
 
   constructor(
     string memory name,
     string memory symbol,
-    uint256 supply,
-    uint256 price,
-    address ethfsFileStorageAddress,
-    address scriptyBuilderAddress,
-    address thumbnailAddress,
-    address rendererAddress
+    uint256 _supply,
+    uint256 _price,
+    address _thumbnailAddress,
+    address _rendererAddress
   ) Base(name, symbol) {
-    _ethfsFileStorageAddress = ethfsFileStorageAddress;
-    _scriptyBuilderAddress = scriptyBuilderAddress;
-    _thumbnailAddress = thumbnailAddress;
-    _rendererAddress = rendererAddress;
+    thumbnailAddress = _thumbnailAddress;
+    rendererAddress = _rendererAddress;
 
-    _supply = supply;
-    _price = price;
+    supply = _supply;
+    price = _price;
 
     // mint reserve of 20 for friends that helped
     // and a few giveaways
@@ -56,16 +48,16 @@ contract Planets is Base {
    * @param _quantity Quantity of tokens to mint.
    */
   function mint(uint256 _quantity) public payable {
-    if (msg.value < _price * _quantity) revert InsufficientFunds();
-    if (totalMinted() + _quantity > _supply) revert SoldOut();
+    if (msg.value < price * _quantity) revert InsufficientFunds();
+    if (totalMinted() + _quantity > supply) revert SoldOut();
     if (_numberMinted(msg.sender) + _quantity > 20) revert WalletMax();
 
     _mint(msg.sender, _quantity);
 
     // Refund any extra ETH sent
-    if (msg.value > _price * _quantity) {
-      (bool status, ) = payable(msg.sender).call{value: msg.value - _price * _quantity}("");
-      require(status, "Refund failed");
+    if (msg.value > price * _quantity) {
+      (bool status, ) = payable(msg.sender).call{value: msg.value - price * _quantity}("");
+      if (!status) revert RefundFailed();
     }
   }
 
@@ -79,27 +71,27 @@ contract Planets is Base {
   /**
    * @notice Update the mint price.
    * @dev Very doubtful this gets used, but good to have
-   * @param price - The new price.
+   * @param _price - The new price.
    */
-  function setPrice(uint256 price) external onlyOwner {
-    _price = price;
+  function setPrice(uint256 _price) external onlyOwner {
+    price = price;
   }
 
   /**
    * @notice Update thumbnail contract address
-   * @param thumbnailAddress - Address of the thumbnail contract.
+   * @param _thumbnailAddress - Address of the thumbnail contract.
    */
-  function setThumbnailAddress(address thumbnailAddress) external onlyOwner {
-    if (_totalMinted() == _supply) revert SoldOut();
-    _thumbnailAddress = thumbnailAddress;
+  function setThumbnailAddress(address _thumbnailAddress) external onlyOwner {
+    if (_totalMinted() == supply) revert SoldOut();
+    thumbnailAddress = _thumbnailAddress;
   }
 
   /**
    * @notice Open or close minting
-   * @param state - Boolean state for being open or closed.
+   * @param _state - Boolean state for being open or closed.
    */
-  function setMintStatus(bool state) external onlyOwner {
-    _isOpen = state;
+  function setMintStatus(bool _state) external onlyOwner {
+    isOpen = _state;
   }
 
   /**
@@ -130,24 +122,45 @@ contract Planets is Base {
 
   /**
    * @notice Build all the settings into a struct
-   * @param tokenId - Value as string
+   * @param _tokenId - Value as string
    * @return settings - All settings as a struct
    */
-  function buildSettings(uint256 tokenId) internal pure returns (Settings memory settings) {
-    // TODO
-    (uint256 seed, bytes memory varSeed) = genVar(tokenId, "seed", 1, 1000000);
+  function buildSettings(uint256 _tokenId) internal pure returns (Settings memory settings) {
+    (uint256 seed, bytes memory varSeed) = genVar(_tokenId, "seed", 1, 1000000);
     settings.seed = seed;
     settings.vars[0] = varSeed;
+
+    (uint256 planetSize, bytes memory varPlanetSize) = genVar(_tokenId, "planetSize", 30, 170);
+    settings.planetSize = planetSize;
+    settings.vars[1] = varPlanetSize;
+
+    (uint256 hasRings, bytes memory varHasRings) = genVar(_tokenId, "hasRings", 0, 1);
+    settings.hasRings = hasRings == 1;
+    settings.vars[2] = varHasRings;
+
+    (uint256 numMoons, bytes memory varNumMoons) = genVar(_tokenId, "numMoons", 0, 5);
+    settings.numMoons = numMoons;
+    settings.vars[3] = varNumMoons;
+
+    (uint256 planetType, bytes memory varPlanetType) = genVar(_tokenId, "planetType", 0, 1);
+    settings.planetType = PlanetType(planetType);
+    settings.vars[4] = varPlanetType;
+
+    (uint256 hasAtmosphere, bytes memory varHasAtmosphere) = genVar(_tokenId, "hasAtmosphere", 0, 1);
+    settings.hasAtmosphere = hasAtmosphere == 1;
+    settings.vars[5] = varHasAtmosphere;
+
+    return settings;
   }
 
   /**
    * @notice Util function to help build traits
-   * @param key - Trait key as string
-   * @param value - Trait value as string
+   * @param _key - Trait key as string
+   * @param _value - Trait value as string
    * @return trait - object as string
    */
-  function buildTrait(string memory key, string memory value) internal pure returns (string memory trait) {
-    return string.concat('{"trait_type":"', key, '","value": "', value, '"}');
+  function buildTrait(string memory _key, string memory _value) internal pure returns (string memory trait) {
+    return string.concat('{"trait_type":"', _key, '","value": "', _value, '"}');
   }
 
   /**
@@ -156,19 +169,20 @@ contract Planets is Base {
    * @return attr - array as a string
    */
   function buildAttributes(Settings memory settings) internal pure returns (bytes memory attr) {
-    // TODO
     return
       abi.encodePacked(
         '"attributes": [',
         buildTrait("Seed", utils.uint2str(settings.seed)),
-        // ",",
-        // buildTrait("Biome", settings.biomeName),
-        // ",",
-        // buildTrait("Orientation", orientation),
-        // ",",
-        // buildTrait("Speed", speedString),
-        // ",",
-        // buildTrait("World Scale", scaleString),
+        ",",
+        buildTrait("Planet Size", utils.uint2str(settings.planetSize)),
+        ",",
+        buildTrait("Has Rings", settings.hasRings ? "Yes" : "No"),
+        ",",
+        buildTrait("Number of Moons", utils.uint2str(settings.numMoons)),
+        ",",
+        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Solid" : "Gas"),
+        ",",
+        buildTrait("Has Atmosphere", settings.hasAtmosphere ? "Yes" : "No"),
         "]"
       );
   }
@@ -200,26 +214,26 @@ contract Planets is Base {
    * @dev This depends on
    *      - https://ethfs.xyz/ [stores code libraries]
    *      - https://github.com/intartnft/scripty.sol [builds rendering html and stores code libraries]
-   * @param tokenId - TokenId to build coaster for
+   * @param _tokenId - TokenId to build coaster for
    * @return metadata - as string
    */
-  function tokenURI(uint256 tokenId) public view virtual override(ERC721A, IERC721A) returns (string memory metadata) {
+  function tokenURI(uint256 _tokenId) public view virtual override(ERC721A, IERC721A) returns (string memory metadata) {
     // show nothing if token doesnt exist
-    if (!_exists(tokenId)) revert TokenDoesntExist();
+    if (!_exists(_tokenId)) revert TokenDoesntExist();
 
     // Generate all the settings and various objects for the metadata
-    Settings memory settings = buildSettings(tokenId);
+    Settings memory settings = buildSettings(_tokenId);
     bytes memory attr = buildAttributes(settings);
     bytes memory vars = buildVars(settings);
-    string memory thumbnail = utils.encode(PlanetsThumbnail(_thumbnailAddress).buildThumbnail(settings));
+    string memory thumbnail = utils.encode(PlanetsThumbnail(thumbnailAddress).buildThumbnail(settings));
 
-    bytes memory animationUri = IPlanetsRenderer(_rendererAddress).buildAnimationURI(settings, vars);
+    bytes memory animationUri = IPlanetsRenderer(rendererAddress).buildAnimationURI(settings, vars);
 
     // TODO: Update this
     bytes memory json = abi.encodePacked(
       '{"name":"',
       "Planet: #",
-      utils.uint2str(tokenId),
+      utils.uint2str(_tokenId),
       '", "description":"',
       "All the models and code are compressed then stored, and retrieved from the blockchain.",
       '","image":"data:image/svg+xml;base64,',

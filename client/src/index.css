@@ -7,6 +7,10 @@ body {
   padding: 0;
   margin: 0;
   font-family: "Space Mono", monospace;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 a {

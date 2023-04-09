@@ -11,25 +11,29 @@
 
   <body>
     <script>
+      let seed = 12345
+      let planetSize = 45 // random(30, 170)
+      let hasRings = true // random() < 0.5 // 50% chance
+      let numMoons = 2 // floor(random(0, 5)) // Up to 3 moons
+      let planetType = 0 // 0 = gas, 1 = solid
+      let hasAtmosphere = true // random() < 0.5 // 50% chance
+      let colors = []
+
       let angle = 0
       let textureImg
       let stars = []
-      let planetSize
       let initialRotationX
       let initialRotationY
-      let hasRings
       let rings = []
       let ringSize
       let numRingParticles
-      let numMoons
       let moonSize
       let moons = []
       let moonTextures = []
-      let planetType
       let ringTextureImg
 
       function setup() {
-        //randomSeed(1767)
+        randomSeed(seed)
         createCanvas(500, 500, WEBGL)
         let numColors = 5
         let randomPalette = []

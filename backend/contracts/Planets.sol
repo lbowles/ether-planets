@@ -135,7 +135,7 @@ contract Planets is Base {
     uint256 _high
   ) internal pure returns (uint256 value, bytes memory varString) {
     value = utils.randomRange(_seed, _name, _low, _high);
-    varString = abi.encodePacked("var ", _name, '="', utils.uint2str(value), '";');
+    varString = abi.encodePacked("var ", _name, "=", utils.uint2str(value), ";");
   }
 
   /**
@@ -163,10 +163,6 @@ contract Planets is Base {
     (uint256 planetType, bytes memory varPlanetType) = genVar(_tokenId, "planetType", 0, 1);
     settings.planetType = PlanetType(planetType);
     settings.vars[4] = varPlanetType;
-
-    (uint256 hasAtmosphere, bytes memory varHasAtmosphere) = genVar(_tokenId, "hasAtmosphere", 0, 1);
-    settings.hasAtmosphere = hasAtmosphere == 1;
-    settings.vars[5] = varHasAtmosphere;
 
     return settings;
   }
@@ -199,8 +195,6 @@ contract Planets is Base {
         buildTrait("Number of Moons", utils.uint2str(settings.numMoons)),
         ",",
         buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Solid" : "Gas"),
-        ",",
-        buildTrait("Has Atmosphere", settings.hasAtmosphere ? "Yes" : "No"),
         "]"
       );
   }
@@ -211,18 +205,10 @@ contract Planets is Base {
    * @return vars - base64 encoded JS compatible setting variables
    */
   function buildVars(Settings memory settings) internal pure returns (bytes memory vars) {
-    // TODO
     return
       bytes(
         utils.encode(
-          abi.encodePacked(
-            settings.vars[0],
-            settings.vars[1],
-            settings.vars[2],
-            settings.vars[3],
-            settings.vars[4],
-            settings.vars[5]
-          )
+          abi.encodePacked(settings.vars[0], settings.vars[1], settings.vars[2], settings.vars[3], settings.vars[4])
         )
       );
   }

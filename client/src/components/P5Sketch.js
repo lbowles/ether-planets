@@ -43,11 +43,11 @@ const P5Sketch = () => {
     }
 
     // Generate stars
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 500; i++) {
       stars.push({
-        x: random(-width, width),
-        y: random(-height, height),
-        z: random(width),
+        x: random(-width*1.5, width*1.5),
+        y: random(-height*1.5, height*1.5),
+        z: random(width*1.5),
         radius: random(0.5, 2),
       })
     }
@@ -62,13 +62,11 @@ const P5Sketch = () => {
     if (hasRings) {
       ringSize = random(planetSize * 1.5, planetSize * 1.7)
       let baseColor = random(randomColorPalette.colors) // Select a random color from the planet's color palette
-      console.log(baseColor)
       ringTextureImg = generateRingTexture(baseColor) // Pass the base color to generateRingTexture()
     }
 
     // Generate moons
     numMoons = random(1, random(4)) // Up to 3 moons
-    console.log(numMoons)
     for (let i = 0; i < numMoons; i++) {
       let moonRadius = random(planetSize * 0.08, planetSize * 0.21)
 
@@ -100,7 +98,6 @@ const P5Sketch = () => {
 
     for (let i = 0; i < numStripes; i++) {
       let brightnessAdjustment = random(-30, 100)
-      console.log(red(baseColor))
       let adjustedColor = color(
         red(baseColor) + brightnessAdjustment,
         green(baseColor) + brightnessAdjustment,
@@ -252,20 +249,20 @@ const P5Sketch = () => {
     <div
       dangerouslySetInnerHTML={{
         __html: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <script src="https://cdn.jsdelivr.net/npm/p5"></script>
-            </head>
-            <style>
-              body {
-                background-color: black;
-              }
-            </style>
-            <body>
-              <script>${sketch}</script>
-            </body>
-          </html>
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src="https://cdn.jsdelivr.net/npm/p5"></script>
+          </head>
+          <style>
+            body {
+              background-color: black;
+            }
+          </style>
+          <body>
+            <script>${sketch}</script>
+          </body>
+         </html>
         `,
       }}
     />

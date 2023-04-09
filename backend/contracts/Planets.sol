@@ -140,7 +140,7 @@ contract Planets is Base {
 
   /**
    * @notice Build all the settings into a struct
-   * @param _tokenId - Value as string
+   * @param _tokenId - Token ID for seed value
    * @return settings - All settings as a struct
    */
   function buildSettings(uint256 _tokenId) internal pure returns (Settings memory settings) {

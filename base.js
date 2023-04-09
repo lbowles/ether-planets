@@ -3,7 +3,6 @@
 // let hasRings = true // random() < 0.5 // 50% chance
 // let numMoons = 2 // floor(random(0, 5)) // Up to 3 moons
 // let planetType = 0 // 0 = gas, 1 = solid
-// let hasAtmosphere = true // random() < 0.5 // 50% chance
 // let colors = []
 
 let angle = 0
@@ -12,7 +11,8 @@ let initialRotationX
 let initialRotationY
 let ringSize
 let numRingParticles
-let atmosphereColor
+let moonSize
+let ringTextureImg
 let stars = []
 let rings = []
 let moons = []
@@ -23,7 +23,6 @@ function setup() {
   createCanvas(500, 500, WEBGL)
   let numColors = 5
   let randomPalette = []
-  // TODO: Color palette generated in solidity
   for (let i = 0; i < numColors; i++) {
     randomPalette.push(color(random(255), random(255), random(255)))
   }
@@ -38,7 +37,7 @@ function setup() {
   }
 
   // Generate stars
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 500; i++) {
     stars.push({
       x: random(-width * 5, width * 5),
       y: random(-height * 5, height * 5),
@@ -49,29 +48,14 @@ function setup() {
 
   initialRotationX = random(360)
   initialRotationY = 148
-
   textureImg = generateTexture(randomColorPalette.thresholds, randomColorPalette.colors, planetType)
 
-  // Determine if the planet should have rings
-
   if (hasRings) {
-    numRingParticles = random(400, 1500)
-    ringSize = random(planetSize * 1.5, planetSize * 2)
-    // Generate particles for the rings
-    for (let i = 0; i < numRingParticles; i++) {
-      let theta = random(TWO_PI)
-      let ringRadius = random(ringSize * 0.7, Math.max(ringSize, 80))
-      rings.push({
-        x: ringRadius * cos(theta),
-        y: ringRadius * sin(theta),
-        z: random(-5, 5),
-        radius: random(0.1, 2),
-      })
-    }
+    ringSize = random(planetSize * 1.3, planetSize * 1.5)
+    ringTextureImg = generateRingTexture()
   }
 
   // Generate moons
-
   for (let i = 0; i < numMoons; i++) {
     let moonRadius = random(planetSize * 0.05, planetSize * 0.21)
 
@@ -92,21 +76,29 @@ function setup() {
       orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
     })
   }
+}
 
-  if (hasAtmosphere) {
-    let r = random(0, 255)
-    let g = random(0, 255)
-    let b = random(0, 255)
-    let a = random(30, 100) // Adjust the range of transparency as needed
-    atmosphereColor = color(r, g, b, a)
+function generateRingTexture() {
+  let textureImg = createGraphics(248, 124)
+  let numStripes = random(5, 15)
+  let stripeHeight = textureImg.height / numStripes
+
+  for (let i = 0; i < numStripes; i++) {
+    let col = color(random(100, 255), random(100, 255), random(100, 255), 100) // Add the alpha value (100 in this case)
+    textureImg.fill(col)
+    textureImg.noStroke()
+    textureImg.rect(0, i * stripeHeight, textureImg.width, stripeHeight)
   }
+
+  textureImg.updatePixels()
+  return textureImg
 }
 
 function generateTexture(elevationThresholds, colors, planetType) {
-  let textureImg = createGraphics(1024, 512)
+  let textureImg = createGraphics(248, 124)
   textureImg.noiseSeed(random(1000))
 
-  let noiseScale = planetType === 0 ? 1 : 4
+  let noiseScale = planetType === "gas" ? 1 : 4
 
   for (let x = 0; x < textureImg.width; x++) {
     for (let y = 0; y < textureImg.height; y++) {
@@ -134,11 +126,6 @@ function generateTexture(elevationThresholds, colors, planetType) {
         col = colors[colors.length - 1] // Assign the last color if elevation is greater than the last threshold
       }
       textureImg.set(x, y, col)
-      // Choose a random color from the palette for the atmosphere color
-      if (hasAtmosphere && x === textureImg.width / 2 && y === textureImg.height / 2) {
-        let atmosphereIndex = floor(random(colors.length))
-        atmosphereColor = colors[atmosphereIndex]
-      }
     }
   }
   textureImg.updatePixels()
@@ -146,7 +133,7 @@ function generateTexture(elevationThresholds, colors, planetType) {
 }
 
 function generateMoonTexture() {
-  let textureImg = createGraphics(512, 256)
+  let textureImg = createGraphics(62, 31)
   textureImg.noiseSeed(random(1000))
 
   for (let x = 0; x < textureImg.width; x++) {
@@ -175,14 +162,6 @@ function drawMoon(moon, moonTexture) {
   pop()
 }
 
-function drawAtmosphere() {
-  push()
-  fill(atmosphereColor)
-  noStroke()
-  sphere(planetSize * 1.05) // Change the size multiplier as needed
-  pop()
-}
-
 function draw() {
   background(0)
   // Set up ambient light
@@ -190,7 +169,7 @@ function draw() {
   ambientMaterial(0)
 
   // Set up point light
-  pointLight(255, 255, 255, 400, 400, 1200)
+  pointLight(255, 255, 255, 400, -10, 1200)
 
   // Draw stars
   push()
@@ -201,27 +180,6 @@ function draw() {
     point(star.x, star.y, star.z)
   }
   pop()
-
-  // Draw rings if the planet has them
-  if (hasRings) {
-    let lightPosX = 0
-    let lightPosY = -planetSize * 1.5
-    let lightPosZ = 0
-    let lightPos = createVector(lightPosX, lightPosY, lightPosZ)
-
-    rotateY(initialRotationY + angle)
-    rotateX(HALF_PI)
-    for (let ringParticle of rings) {
-      let particlePos = createVector(ringParticle.x, ringParticle.y, ringParticle.z)
-      let rotatedParticlePos = particlePos.copy().rotate(-angle)
-      let distToLight = rotatedParticlePos.dist(lightPos)
-      let lightEffect = 1 - pow(distToLight / (planetSize * 2), 1.5)
-      let particleColor = color(120, 120, 120, 255 * lightEffect)
-      stroke(particleColor)
-      strokeWeight(ringParticle.radius)
-      point(ringParticle.x, ringParticle.y, ringParticle.z)
-    }
-  }
 
   let fixedDistance = 450
   let maxAngle = radians(10)
@@ -245,6 +203,18 @@ function draw() {
   sphere(planetSize)
   pop()
 
+  if (hasRings) {
+    push()
+    rotateX(PI / 2) // Rotate the rings to lie on the XY plane
+    console.log(PI / 2)
+    pointLight(255, 255, 255, 400, -400, 1200)
+    scale(1, 1, 0.01) // Scale the Z-axis
+    texture(ringTextureImg) // Apply the ring texture
+    noStroke()
+    torus(ringSize, planetSize * 0.3) // Draw the rings using torus function
+    pop()
+  }
+
   // Draw moons and their orbits
   for (let i = 0; i < numMoons; i++) {
     let moon = moons[i]
@@ -253,11 +223,6 @@ function draw() {
     drawMoon(moon, moonTexture)
     pop() // Add pop() to isolate the moon rotation transformation
   }
-  // Draw atmosphere if the planet has one
-  if (hasAtmosphere) {
-    drawAtmosphere()
-  }
-
   // Update moon angles
   for (let moon of moons) {
     moon.angle += moon.speed

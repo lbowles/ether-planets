@@ -25,6 +25,19 @@ library utils {
     return colorNames[colorIndex];
   }
 
+  function getHSL(uint256 hue, uint256 saturation, uint256 lightness) internal pure returns (string memory) {
+    return
+      string.concat(
+        "hsl(",
+        utils.uint2str(hue),
+        ", ",
+        utils.uint2str(saturation),
+        "%, ",
+        utils.uint2str(lightness),
+        "%)"
+      );
+  }
+
   function assemblyKeccak(bytes memory _input) public pure returns (bytes32 x) {
     assembly {
       x := keccak256(add(_input, 0x20), mload(_input))
@@ -68,6 +81,10 @@ library utils {
     } else {
       return uint2str(uint256(_i));
     }
+  }
+
+  function uint2floatstr(uint256 _i_scaled, uint256 _decimals) internal pure returns (string memory) {
+    return string.concat(uint2str(_i_scaled / (10 ** _decimals)), ".", uint2str(_i_scaled % (10 ** _decimals)));
   }
 
   // converts an unsigned integer to a string from Solady (https://github.com/vectorized/solady/blob/main/src)

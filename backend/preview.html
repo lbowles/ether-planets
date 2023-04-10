@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planets</title>
+  </head>
+  <body>
+    <div id="attributes"></div>
+    <img id="thumbnail" alt="Thumbnail" />
+    <iframe id="animation" frameborder="0" height="500px" width="500px"></iframe>
+
+    <script type="module">
+      import { ethers } from "https://cdn.ethers.io/lib/ethers-5.2.esm.min.js"
+
+      function parseByteString(bytes) {
+        // Convert the bytes string to a Uint8Array
+        const byteArray = new Uint8Array(
+          bytes
+            .match(/.{1,2}/g)
+            .slice(1)
+            .map((byte) => parseInt(byte, 16)),
+        )
+
+        // Convert the Uint8Array to a base64 encoded string
+        let binary = ""
+        byteArray.forEach((byte) => {
+          binary += String.fromCharCode(byte)
+        })
+        return binary
+      }
+
+      async function loadContract(contractName, signer) {
+        console.log(`Loading contract ${contractName}...`)
+        const response = await fetch(`./deployments/localhost/${contractName}.json`)
+        const deployment = await response.json()
+        const contract = new ethers.Contract(deployment.address, deployment.abi, signer)
+        return contract
+      }
+
+      // Call the contract methods and process the returned data
+      async function getThumbnailAndAnimation(tokenId, planetsContract, rendererContract, thumbnailContract) {
+        // Make calls to create resources
+        const settings = await planetsContract.buildSettings(tokenId)
+        const vars = await planetsContract.buildVars(settings)
+        const attributes = await planetsContract.buildAttributes(settings)
+        console.log(JSON.stringify(JSON.parse(`{${attributes}}`), null, 2))
+
+        // Display the attributes
+        document.getElementById("attributes").innerHTML = JSON.parse(`{${attributes}}`)
+          .attributes.map((attr) => {
+            return `<div>${attr.trait_type}: ${attr.value}</div>`
+          })
+          .join("<br/>")
+
+        thumbnailContract.buildThumbnail(settings).then((thumbnailSvg) => {
+          // Convert the bytes string to a Uint8Array
+          const binary = parseByteString(thumbnailSvg)
+          const base64String = btoa(binary)
+
+          // Use the generated URL as the src for the thumbnail image
+          document.getElementById("thumbnail").src = `data:image/svg+xml;base64,${base64String}`
+        })
+        const animation = rendererContract.buildAnimationURI(vars).then((data) => {
+          const binary = parseByteString(data)
+          document.getElementById("animation").src = decodeURIComponent(decodeURIComponent(binary))
+        })
+      }
+
+      async function main() {
+        const tokenId = Math.floor(Math.random() * 100000)
+        const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545")
+        const planetsContract = await loadContract("Planets", provider)
+        const rendererContract = await loadContract("PlanetsRenderer", provider)
+        const thumbnailContract = await loadContract("PlanetsThumbnail", provider)
+        // uint256 seed = 123;
+        // uint256 planetSize = 35;
+        // bool hasRings = true;
+        // uint256 numMoons = 2;
+        // PlanetType planetType = 1;
+        // uint256 hue = 0;
+        // bool hasWater = true;
+
+        getThumbnailAndAnimation(tokenId, planetsContract, rendererContract, thumbnailContract)
+      }
+
+      main()
+    </script>
+  </body>
+</html>

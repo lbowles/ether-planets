@@ -24,8 +24,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts()
   const signers = await ethers.getSigners()
 
-  let name = "Planets"
-  let symbol = "ET"
+  let name = "EtherPlanets"
+  let symbol = "EP"
 
   const currentBlock = await ethers.provider.getBlockNumber()
 

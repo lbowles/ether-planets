@@ -57,6 +57,9 @@ describe("Planets", function () {
     expect(json.name).to.equal(name)
     expect(json.description).to.equal(description)
     expect(json.image).to.contain("data:image/svg+xml;base64")
+
+    console.log(json.image)
+
     expect(json.animation_url).to.contain("data%3Atext")
     // expect(json.attributes)
 

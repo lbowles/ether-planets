@@ -12,23 +12,25 @@
   <body>
     <script>
       function randomRange(min, max) {
-        return Math.floor(Math.random() * (max - min) + min)
+        return Math.floor(Math.random() * (max - min + 1) + min)
       }
 
       let seed = randomRange(0, 1000000)
       let planetSize = randomRange(30, 100) // random(30, 170)
-      let hasRings = randomRange(0, 10) === 5 // random() < 0.5 // 50% chance
+      let hasRings = 1 //randomRange(0, 10) === 5 // 10% chance
       let numMoons = 3 // randomRange(0, 3) // floor(random(0, 5)) // Up to 3 moons
-      let planetType = randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
+      let planetType = 1 // randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
       let baseHue = randomRange(0, 360)
+      let hasWater = 1 //randomRange(0, 1)
 
       console.log({
-        seed,
         planetSize,
         hasRings,
         numMoons,
         planetType,
+        hasWater,
         baseHue,
+        seed,
       })
     </script>
     <script src="./base.js"></script>

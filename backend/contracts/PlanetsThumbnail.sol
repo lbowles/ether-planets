@@ -22,7 +22,7 @@ contract PlanetsThumbnail {
     return
       string(
         abi.encodePacked(
-          '<g transform-origin="69 72" transform="translate(-26,-20),translate(182,200),scale(',
+          '<g transform-origin="72 60" transform="translate(-26,-20),translate(200,200),scale(',
           utils.uint2floatstr((planetSize * 1e3) / 40, 3),
           ')">',
           PLANET,

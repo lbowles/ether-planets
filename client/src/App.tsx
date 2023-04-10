@@ -9,6 +9,7 @@ import { Footer } from "./components/Footer"
 import { LandingCopy } from "./components/LandingCopy"
 import { LinksTab } from "./components/LinksTab"
 import NoticeModal from "./components/NoticeModal"
+import Modal from "react-modal"
 import deployments from "./deployments.json"
 import {
   usePlanetsIsOpen,
@@ -164,7 +165,7 @@ function App() {
             href={getOpenSeaLink(deployments.contracts.Planets.address, tokens[0])}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-800  hover:underline no-underline transition-colors"
+            className="text-blue-800 hover:underline no-underline transition-colors"
           >
             {tokens[0]}
           </a>
@@ -191,6 +192,8 @@ function App() {
     )
   }
 
+  Modal.setAppElement("#root")
+
   return (
     <div className="App">
       <NoticeModal
@@ -198,7 +201,6 @@ function App() {
         onRequestClose={() => {
           setIsModalOpen(false)
         }}
-        // onMint={handleMint}
         onMint={() => {
           generalClickSound()
           console.log("test mint")

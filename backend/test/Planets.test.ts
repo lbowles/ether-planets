@@ -209,4 +209,18 @@ describe("Planets", function () {
       "Finalized",
     )
   })
+
+  it.only("Should not allow minting more than total supply", async function () {
+    // Get current supply
+    const totalSupply = await etherPlanets.supply()
+
+    // Mint the max supply
+    await etherPlanets.mint(totalSupply)
+
+    // Check if supply has increased
+    expect(await etherPlanets.totalSupply()).to.equal(totalSupply)
+
+    // Try to mint more
+    await expect(etherPlanets.mint(1)).to.be.revertedWithCustomError(etherPlanets, "SoldOut")
+  })
 })

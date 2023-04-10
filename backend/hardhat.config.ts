@@ -3,6 +3,8 @@ import "hardhat-deploy"
 import "@nomiclabs/hardhat-ethers"
 import "@typechain/hardhat"
 import "@nomicfoundation/hardhat-chai-matchers"
+import dotenv from "dotenv"
+dotenv.config()
 
 const config: HardhatUserConfig = {
   solidity: "0.8.18",
@@ -13,11 +15,28 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://eth-goerli.g.alchemy.com/v2/BfwgJcoByYOQsFKVyzZp0Z2R5m-wZ3mN",
+        url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
       },
     },
     goerli: {
-      url: "https://eth-goerli.g.alchemy.com/v2/BfwgJcoByYOQsFKVyzZp0Z2R5m-wZ3mN",
+      chainId: 5,
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      accounts: [process.env.DEFAULT_DEPLOYER_KEY!],
+      verify: {
+        etherscan: {
+          apiKey: process.env.ETHERSCAN_API_KEY || "",
+        },
+      },
+    },
+    mainnet: {
+      chainId: 1,
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      accounts: [process.env.DEFAULT_DEPLOYER_KEY!],
+      verify: {
+        etherscan: {
+          apiKey: process.env.ETHERSCAN_API_KEY || "",
+        },
+      },
     },
   },
   namedAccounts: {

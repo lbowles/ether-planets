@@ -2,6 +2,7 @@ import * as fs from "fs"
 import { DeployFunction } from "hardhat-deploy/types"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import readline from "readline"
+import { Planets__factory } from "../types"
 
 function userInput(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -76,6 +77,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
     // gasPrice: ethers.utils.parseUnits("37", "gwei"),
   })
+
+  if (hre.network.name === "hardhat" && process.env.DEBUG) {
+    console.log("Setting mint status to open")
+    const planetsDeployment = await deployments.get("Planets")
+    const planets = Planets__factory.connect(planetsDeployment.address, signers[0])
+    const tx = await planets.setMintStatus(true)
+    await tx.wait()
+  }
 }
 export default func
 func.tags = ["Planets"]

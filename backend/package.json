@@ -33,7 +33,7 @@
   },
   "scripts": {
     "test": "yarn hardhat test",
-    "start": "yarn hardhat node --export ../client/src/deployments.json",
+    "start": "DEBUG=1 yarn hardhat node --export ../client/src/deployments.json",
     "deploy": "yarn hardhat deploy --export ../client/src/deployments.json",
     "export": "yarn hardhat export --export ../client/src/deployments.json"
   }

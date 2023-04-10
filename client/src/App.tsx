@@ -172,14 +172,13 @@ function App() {
         isOpen={isModalOpen}
         onRequestClose={() => {
           setIsModalOpen(false)
-          generalClickSound()
-          //TODO: mint?.()
         }}
         // onMint={handleMint}
         onMint={() => {
           generalClickSound()
           console.log("test mint")
           setIsModalOpen(false)
+          //TODO: mint?.()
         }}
       />
       <LinksTab />
@@ -193,7 +192,7 @@ function App() {
           <div className="text-center text-[12px] pb-5 text-white">3/4242</div>
           <div className="flex justify-center">
             <button
-              className="text-gray-500 text-[36px] mt-[-5px] hover:text-white"
+              className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3"
               onClick={() => {
                 handleMintAmountChange(Math.max(1, mintCount - 1))
                 setIsCustomVisible(false)
@@ -230,7 +229,7 @@ function App() {
             </button>
             <button
               //TODO: disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
-              className="text-gray-500 text-3xl hover:text-white "
+              className="text-gray-500 text-3xl pr-3 hover:text-white "
               onClick={() => {
                 handleMintAmountChange(mintCount + 1)
                 setIsCustomVisible(false)

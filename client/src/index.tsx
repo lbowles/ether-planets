@@ -21,7 +21,7 @@ const isDev = process.env.NODE_ENV === "development"
 const { chains, provider, webSocketProvider } = configureChains([deployedChain], [publicProvider()])
 
 const { connectors } = getDefaultWallets({
-  appName: "BlackHoles",
+  appName: "EtherPlanets",
   chains,
 })
 

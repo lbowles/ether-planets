@@ -14,8 +14,8 @@ import {
   usePlanetsIsOpen,
   usePlanetsMint,
   usePlanetsPrice,
+  usePlanetsSupply,
   usePlanetsTotalMinted,
-  usePlanetsTotalSupply,
   usePreparePlanetsMint,
 } from "./generated"
 import blockSpinner from "./img/blockSpinner.svg"
@@ -33,7 +33,7 @@ function App() {
   const { data: mintPrice, isLoading: priceLoading } = usePlanetsPrice({ watch: true })
   const { data: isOpen, isLoading: isIsOpenLoading } = usePlanetsIsOpen({ watch: true })
   const { data: amountMinted, isLoading: amountMintedLoading } = usePlanetsTotalMinted({ watch: true })
-  const { data: totalSupply, isLoading: totalSupplyLoading } = usePlanetsTotalSupply()
+  const { data: totalSupply, isLoading: totalSupplyLoading } = usePlanetsSupply()
 
   const addRecentTransaction = useAddRecentTransaction()
   const account = useAccount()
@@ -99,21 +99,27 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    setTotalPrice(mintPrice?.mul(mintCount))
+  }, [mintPrice])
+
+  useEffect(() => {
+    const loading = priceLoading || isIsOpenLoading || amountMintedLoading || isMintTxLoading
+    setMintBtnLoading(loading)
+    setMintBtnDisabled(loading || !isOpen)
+  }, [priceLoading, isIsOpenLoading, amountMintedLoading, isMintTxLoading])
+
   const handleMintAmountChange = (amount: number) => {
     setMintAmount(amount)
     setTotalPrice(mintPrice?.mul(amount))
   }
 
-  const toggelCustomAmount = () => {
-    if (isCustomVisible) {
-      setIsCustomVisible(false)
-    } else {
-      setIsCustomVisible(true)
-    }
+  const toggleCustomAmount = () => {
+    setIsCustomVisible(!isCustomVisible)
   }
 
   useEffect(() => {
-    const loading = priceLoading || isIsOpenLoading || amountMintedLoading || isMintTxLoading
+    const loading = priceLoading || isIsOpenLoading || amountMintedLoading || totalSupplyLoading || isMintTxLoading
     setMintBtnLoading(loading)
   }, [priceLoading, isIsOpenLoading, amountMintedLoading, isMintTxLoading])
 
@@ -207,7 +213,7 @@ function App() {
       {/* <LinksTab /> */}
       <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
-          {amountMinted && totalSupply && (
+          {amountMinted != undefined && totalSupply != undefined && (
             <div className="text-center text-[12px] pb-5 text-white">
               {amountMinted.toBigInt().toLocaleString()}/{totalSupply.toBigInt().toLocaleString()}
             </div>
@@ -241,14 +247,15 @@ function App() {
               ) : (
                 <>
                   {isMintSignLoading
-                    ? "WAITING FOR WALLET"
+                    ? "Waiting for wallet..."
                     : !account.isConnected
-                    ? "CONNECT WALLET"
+                    ? "Connect wallet"
+                    : !isOpen
+                    ? "Sale not started"
                     : totalPrice !== undefined
-                    ? `MINT ${mintCount} FOR ${ethers.utils.formatEther(totalPrice)} ETH`
-                    : "PRICE UNAVAILABLE"}
+                    ? `Mint ${mintCount} for ${ethers.utils.formatEther(totalPrice)} ETH`
+                    : "Price unavailable"}
                 </>
-                // <>Mint {mintCount} for 23 ETH </>
               )}
             </button>
             <button
@@ -271,7 +278,7 @@ function App() {
                   disabled={isMintSignLoading || isMintTxLoading}
                   className=" text-[12px] text-gray-500 hover:text-white transition-all text-right"
                   onClick={() => {
-                    toggelCustomAmount()
+                    toggleCustomAmount()
                     generalClickSound()
                   }}
                 >

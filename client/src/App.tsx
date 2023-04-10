@@ -9,6 +9,7 @@ import { Footer } from "./components/Footer"
 import { LandingCopy } from "./components/LandingCopy"
 import { LinksTab } from "./components/LinksTab"
 import NoticeModal from "./components/NoticeModal"
+import Modal from "react-modal"
 import deployments from "./deployments.json"
 import {
   usePlanetsIsOpen,
@@ -25,6 +26,7 @@ import smallClickEffect from "./sounds/smallClick.mp3"
 import submitEffect from "./sounds/submit.mp3"
 import { getEtherscanBaseURL } from "./utils/getEtherscanBaseURL"
 import { getOpenSeaLink } from "./utils/getOpenSeaLink"
+import loadingSpinner from "./img/loadingSpinner.svg"
 
 const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
@@ -163,7 +165,7 @@ function App() {
             href={getOpenSeaLink(deployments.contracts.Planets.address, tokens[0])}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-white hover:underline no-underline transition-colors"
+            className="text-blue-800 hover:underline no-underline transition-colors"
           >
             {tokens[0]}
           </a>
@@ -190,6 +192,8 @@ function App() {
     )
   }
 
+  Modal.setAppElement("#root")
+
   return (
     <div className="App">
       <NoticeModal
@@ -197,7 +201,6 @@ function App() {
         onRequestClose={() => {
           setIsModalOpen(false)
         }}
-        // onMint={handleMint}
         onMint={() => {
           generalClickSound()
           console.log("test mint")
@@ -211,116 +214,120 @@ function App() {
         <ConnectButton />
       </div>
       {/* <LinksTab /> */}
-      <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
-        <div>
-          {amountMinted != undefined && totalSupply != undefined && (
-            <div className="text-center text-[12px] pb-5 text-white">
-              {amountMinted.toBigInt().toLocaleString()}/{totalSupply.toBigInt().toLocaleString()}
-            </div>
-          )}
+      <div className="absolute sm:top-[66%] top-[66%] w-full">
+        <div className=" w-full  flex justify-center">
+          <div>
+            {amountMinted != undefined && totalSupply != undefined && (
+              <div className="text-center text-[12px] pb-5 text-white">
+                {amountMinted.toBigInt().toLocaleString()}/{totalSupply.toBigInt().toLocaleString()}
+              </div>
+            )}
 
-          <div className="flex justify-center">
-            <button
-              className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3"
-              onClick={() => {
-                handleMintAmountChange(Math.max(1, mintCount - 1))
-                setIsCustomVisible(false)
-                handleAmountClick(mintCount - 1)
-              }}
-              disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
-            >
-              -
-            </button>
-            <button
-              onClick={() => {
-                generalClickSound()
-                setIsModalOpen(true)
-                setIsCustomVisible(false)
-              }}
-              className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px] mx-2"
-              disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading}
-            >
-              {mintBtnLoading ? (
-                <div className="w-full flex justify-center h-full">
-                  <img className="h-full p-[12px]" src={blockSpinner}></img>
+            <div className="flex justify-center">
+              <button
+                className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3"
+                onClick={() => {
+                  handleMintAmountChange(Math.max(1, mintCount - 1))
+                  setIsCustomVisible(false)
+                  handleAmountClick(mintCount - 1)
+                }}
+                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+              >
+                -
+              </button>
+              <button
+                onClick={() => {
+                  generalClickSound()
+                  setIsModalOpen(true)
+                  setIsCustomVisible(false)
+                }}
+                className={`transition-colors duration-300 bg-none  border-[1px] ${
+                  !mintBtnDisabled && !isMintSignLoading && !isMintTxLoading && "hover:bg-white"
+                } border-white text-white hover:text-black  px-4 py-2 rounded text-[14px] mx-2 disabled:bg-none disabled:text-white disabled:border-gray-500`}
+                disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading}
+              >
+                {mintBtnLoading ? (
+                  <div className="w-full flex justify-center h-full">
+                    <img className="animate-spin w-4" src={loadingSpinner}></img>
+                  </div>
+                ) : (
+                  <>
+                    {isMintSignLoading
+                      ? "Waiting for wallet..."
+                      : !account.isConnected
+                      ? "Connect wallet"
+                      : !isOpen
+                      ? "Sale not started"
+                      : totalPrice !== undefined
+                      ? `Mint ${mintCount} for ${ethers.utils.formatEther(totalPrice)} ETH`
+                      : "Price unavailable"}
+                  </>
+                )}
+              </button>
+              <button
+                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+                className="text-gray-500 text-3xl pr-3 hover:text-white"
+                onClick={() => {
+                  handleMintAmountChange(mintCount + 1)
+                  setIsCustomVisible(false)
+                  // handleAmountClickUp()
+                  handleAmountClick(mintCount + 1)
+                }}
+              >
+                +
+              </button>
+            </div>
+            {account.isConnected && (
+              <>
+                <div className="w-full justify-center flex mt-1 transition-all">
+                  <button
+                    disabled={isMintSignLoading || isMintTxLoading}
+                    className=" text-[12px] text-gray-500 hover:text-white transition-all text-right"
+                    onClick={() => {
+                      toggleCustomAmount()
+                      generalClickSound()
+                    }}
+                  >
+                    {isCustomVisible ? <>Hide</> : <>Custom amount</>}
+                  </button>
                 </div>
-              ) : (
-                <>
-                  {isMintSignLoading
-                    ? "Waiting for wallet..."
-                    : !account.isConnected
-                    ? "Connect wallet"
-                    : !isOpen
-                    ? "Sale not started"
-                    : totalPrice !== undefined
-                    ? `Mint ${mintCount} for ${ethers.utils.formatEther(totalPrice)} ETH`
-                    : "Price unavailable"}
-                </>
-              )}
-            </button>
-            <button
-              disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
-              className="text-gray-500 text-3xl pr-3 hover:text-white"
-              onClick={() => {
-                handleMintAmountChange(mintCount + 1)
-                setIsCustomVisible(false)
-                // handleAmountClickUp()
-                handleAmountClick(mintCount + 1)
-              }}
-            >
-              +
-            </button>
+                <div className="w-full justify-center flex mt-1 transition-all">
+                  <input
+                    className={`text-white block rounded text-[12px] appearance-none bg-black border border-gray-500 hover:border-blue-950 focus:border-blue-900 px-3 py-1 leading-tight focus:outline-none w-[70px] mb-2 transition-all ${
+                      isCustomVisible && !isMintSignLoading && !isMintTxLoading ? "visible" : "hidden"
+                    }`}
+                    type="number"
+                    min="1"
+                    max="4000"
+                    placeholder={mintCount.toString()}
+                    onChange={(e) => {
+                      let value = parseInt(e.target.value)
+                      if (e.target.value === "" || value === 0) {
+                        handleMintAmountChange(1)
+                      } else {
+                        handleMintAmountChange(value)
+                        handleAmountClick(value)
+                      }
+                    }}
+                  ></input>
+                </div>
+              </>
+            )}
           </div>
-          {account.isConnected && (
-            <>
-              <div className="w-full justify-center flex mt-1 transition-all">
-                <button
-                  disabled={isMintSignLoading || isMintTxLoading}
-                  className=" text-[12px] text-gray-500 hover:text-white transition-all text-right"
-                  onClick={() => {
-                    toggleCustomAmount()
-                    generalClickSound()
-                  }}
-                >
-                  {isCustomVisible ? <>Hide</> : <>Custom amount</>}
-                </button>
-              </div>
-              <div className="w-full justify-center flex mt-1 transition-all">
-                <input
-                  className={`text-white block rounded text-[12px] appearance-none bg-black border border-gray-500 hover:border-blue-950 focus:border-blue-900 px-3 py-1 leading-tight focus:outline-none w-[70px] mb-2 transition-all ${
-                    isCustomVisible && !isMintSignLoading && !isMintTxLoading ? "visible" : "hidden"
-                  }`}
-                  type="number"
-                  min="1"
-                  max="4000"
-                  placeholder={mintCount.toString()}
-                  onChange={(e) => {
-                    let value = parseInt(e.target.value)
-                    if (e.target.value === "" || value === 0) {
-                      handleMintAmountChange(1)
-                    } else {
-                      handleMintAmountChange(value)
-                      handleAmountClick(value)
-                    }
-                  }}
-                ></input>
-              </div>
-            </>
-          )}
         </div>
         {mintTx && mintTx.status && (
-          <div>
+          <div className=" text-sm">
             <div className="w-full flex justify-center">
               <a
                 href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-base text-gray-500 hover:text-white hover:underline no-underline transition-colors pt-5"
+                className=" hover:underline no-underline transition-colors pt-5 text-blue-800 "
               >
                 View transaction
               </a>
             </div>
-            <p className="text-base text-gray-500 transition-colors w-full text-center pt-1">
+            <p className=" text-gray-500 transition-colors w-full text-center pt-1">
               Minted tokens: [ {displayMintedTokens(mintedTokens)}]
             </p>
           </div>

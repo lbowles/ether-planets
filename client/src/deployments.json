@@ -3,7 +3,7 @@
   "chainId": "31337",
   "contracts": {
     "utils": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "address": "0x9DE1E23445685a4fcF18CfF491ADad76A806c54d",
       "abi": [
         {
           "inputs": [
@@ -27,55 +27,17 @@
         {
           "inputs": [
             {
-              "internalType": "uint256[3]",
-              "name": "_hsl",
-              "type": "uint256[3]"
+              "internalType": "uint256",
+              "name": "_hue",
+              "type": "uint256"
             }
           ],
-          "name": "getHslString",
+          "name": "getColorName",
           "outputs": [
             {
               "internalType": "string",
               "name": "",
               "type": "string"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_packedHsl",
-              "type": "uint256"
-            }
-          ],
-          "name": "getHslString",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_packedHsl",
-              "type": "uint256"
-            }
-          ],
-          "name": "unpackHsl",
-          "outputs": [
-            {
-              "internalType": "uint256[3]",
-              "name": "",
-              "type": "uint256[3]"
             }
           ],
           "stateMutability": "pure",
@@ -83,118 +45,175 @@
         }
       ]
     },
-    "Renderer": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "PlanetsRenderer": {
+      "address": "0x85417BD1EE4833182405e57308f2BbECB5C50888",
       "abi": [
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_ethfsFileStorageAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_scriptyBuilderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_scriptyStorageAddress",
+              "type": "address"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "constructor"
         },
         {
-          "inputs": [],
-          "name": "PIXELS_PER_SIDE",
+          "inputs": [
+            {
+              "internalType": "bytes",
+              "name": "_vars",
+              "type": "bytes"
+            }
+          ],
+          "name": "buildAnimationURI",
           "outputs": [
             {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
+              "internalType": "bytes",
+              "name": "html",
+              "type": "bytes"
             }
           ],
           "stateMutability": "view",
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "ethfsFileStorageAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "scriptyBuilderAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "scriptyStorageAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "PlanetsThumbnail": {
+      "address": "0x3e51dE80257D152356AD4250dEfFf974fCf24537",
+      "abi": [
+        {
           "inputs": [
             {
               "components": [
                 {
                   "internalType": "uint256",
-                  "name": "tokenId",
+                  "name": "seed",
                   "type": "uint256"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "level",
+                  "name": "planetSize",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasRings",
+                  "type": "bool"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "size",
+                  "name": "numMoons",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "enum PlanetType",
+                  "name": "planetType",
+                  "type": "uint8"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "mass",
+                  "name": "hue",
                   "type": "uint256"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
+                  "internalType": "bool",
+                  "name": "hasWater",
+                  "type": "bool"
                 },
                 {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
+                  "internalType": "bytes[7]",
+                  "name": "vars",
+                  "type": "bytes[7]"
                 }
               ],
-              "internalType": "struct BlackHole",
-              "name": "_blackHole",
+              "internalType": "struct Settings",
+              "name": "_settings",
               "type": "tuple"
             }
           ],
-          "name": "getBlackHoleSVG",
+          "name": "buildThumbnail",
           "outputs": [
             {
-              "internalType": "string",
+              "internalType": "bytes",
               "name": "",
-              "type": "string"
+              "type": "bytes"
             }
           ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "level",
-              "type": "uint256"
-            }
-          ],
-          "name": "renderSample",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "pure",
+          "stateMutability": "view",
           "type": "function"
         }
       ]
     },
-    "BlackHoles": {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "Planets": {
+      "address": "0x295C49c85C3A28f69C1D13e69304241ca1ABB9EA",
       "abi": [
         {
           "inputs": [
             {
               "internalType": "string",
-              "name": "_name",
+              "name": "name",
               "type": "string"
             },
             {
               "internalType": "string",
-              "name": "_symbol",
+              "name": "symbol",
               "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_supply",
+              "type": "uint256"
             },
             {
               "internalType": "uint256",
@@ -202,13 +221,13 @@
               "type": "uint256"
             },
             {
-              "internalType": "uint256",
-              "name": "_timedSalePrice",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "_thumbnailAddress",
+              "type": "address"
             },
             {
               "internalType": "address",
-              "name": "_renderer",
+              "name": "_rendererAddress",
               "type": "address"
             }
           ],
@@ -228,6 +247,21 @@
         {
           "inputs": [],
           "name": "BalanceQueryForZeroAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InsufficientFunds",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidQueryRange",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "MintClosed",
           "type": "error"
         },
         {
@@ -257,6 +291,21 @@
         },
         {
           "inputs": [],
+          "name": "RefundFailed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "SoldOut",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "TokenDoesntExist",
+          "type": "error"
+        },
+        {
+          "inputs": [],
           "name": "TransferCallerNotOwnerNorApproved",
           "type": "error"
         },
@@ -278,6 +327,11 @@
         {
           "inputs": [],
           "name": "URIQueryForNonexistentToken",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "WalletMax",
           "type": "error"
         },
         {
@@ -365,19 +419,6 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "MetadataUpdate",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
               "indexed": true,
               "internalType": "address",
               "name": "previousOwner",
@@ -391,12 +432,6 @@
             }
           ],
           "name": "OwnershipTransferred",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [],
-          "name": "TimedSaleStarted",
           "type": "event"
         },
         {
@@ -427,51 +462,6 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "BLACK_HOLE_NAMES",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "MAX_LEVEL",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "MAX_SUPPLY_OF_INTERSTELLAR",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "address[]",
               "name": "_recipients",
               "type": "address[]"
@@ -488,23 +478,10 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "allBlackHoleLevelNames",
-          "outputs": [
-            {
-              "internalType": "string[]",
-              "name": "",
-              "type": "string[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
-              "name": "to",
+              "name": "operator",
               "type": "address"
             },
             {
@@ -540,47 +517,233 @@
         {
           "inputs": [
             {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "seed",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planetSize",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasRings",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "numMoons",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "enum PlanetType",
+                  "name": "planetType",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "hue",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasWater",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bytes[7]",
+                  "name": "vars",
+                  "type": "bytes[7]"
+                }
+              ],
+              "internalType": "struct Settings",
+              "name": "settings",
+              "type": "tuple"
+            }
+          ],
+          "name": "buildAttributes",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "attr",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_tokenId",
               "type": "uint256"
             }
           ],
-          "name": "blackHoleForTokenId",
+          "name": "buildSettings",
           "outputs": [
             {
               "components": [
                 {
                   "internalType": "uint256",
-                  "name": "tokenId",
+                  "name": "seed",
                   "type": "uint256"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "level",
+                  "name": "planetSize",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasRings",
+                  "type": "bool"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "size",
+                  "name": "numMoons",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "enum PlanetType",
+                  "name": "planetType",
+                  "type": "uint8"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "mass",
+                  "name": "hue",
                   "type": "uint256"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
+                  "internalType": "bool",
+                  "name": "hasWater",
+                  "type": "bool"
                 },
                 {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
+                  "internalType": "bytes[7]",
+                  "name": "vars",
+                  "type": "bytes[7]"
                 }
               ],
-              "internalType": "struct BlackHole",
+              "internalType": "struct Settings",
+              "name": "settings",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "seed",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "planetSize",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasRings",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "numMoons",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "enum PlanetType",
+                  "name": "planetType",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "hue",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasWater",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bytes[7]",
+                  "name": "vars",
+                  "type": "bytes[7]"
+                }
+              ],
+              "internalType": "struct Settings",
+              "name": "settings",
+              "type": "tuple"
+            }
+          ],
+          "name": "buildVars",
+          "outputs": [
+            {
+              "internalType": "bytes",
+              "name": "vars",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "burn",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "name": "explicitOwnershipOf",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "startTimestamp",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "burned",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint24",
+                  "name": "extraData",
+                  "type": "uint24"
+                }
+              ],
+              "internalType": "struct IERC721A.TokenOwnership",
               "name": "",
               "type": "tuple"
             }
@@ -596,63 +759,34 @@
               "type": "uint256[]"
             }
           ],
-          "name": "blackHolesForTokenIds",
+          "name": "explicitOwnershipsOf",
           "outputs": [
             {
               "components": [
                 {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
+                  "internalType": "uint64",
+                  "name": "startTimestamp",
+                  "type": "uint64"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
+                  "internalType": "bool",
+                  "name": "burned",
+                  "type": "bool"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
+                  "internalType": "uint24",
+                  "name": "extraData",
+                  "type": "uint24"
                 }
               ],
-              "internalType": "struct BlackHole[]",
+              "internalType": "struct IERC721A.TokenOwnership[]",
               "name": "",
               "type": "tuple[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "getAdjustmentForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -672,45 +806,6 @@
               "internalType": "address",
               "name": "",
               "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getBaseUpgradeMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getMintState",
-          "outputs": [
-            {
-              "internalType": "enum BlackHoles.MintState",
-              "name": "",
-              "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getPrice",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -742,95 +837,12 @@
         },
         {
           "inputs": [],
-          "name": "isMergingEnabled",
+          "name": "isOpen",
           "outputs": [
             {
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "levelForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "massForTokenId",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "massesConsumed",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokens",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "merge",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "mergingDelay",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -863,19 +875,13 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_level",
-              "type": "uint256"
-            }
-          ],
-          "name": "nameForBlackHoleLevel",
+          "inputs": [],
+          "name": "operatorFilteringEnabled",
           "outputs": [
             {
-              "internalType": "string",
+              "internalType": "bool",
               "name": "",
-              "type": "string"
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -928,10 +934,10 @@
         },
         {
           "inputs": [],
-          "name": "renderer",
+          "name": "rendererAddress",
           "outputs": [
             {
-              "internalType": "contract Renderer",
+              "internalType": "address",
               "name": "",
               "type": "address"
             }
@@ -944,6 +950,35 @@
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_salePrice",
+              "type": "uint256"
+            }
+          ],
+          "name": "royaltyInfo",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -988,7 +1023,7 @@
             },
             {
               "internalType": "bytes",
-              "name": "_data",
+              "name": "data",
               "type": "bytes"
             }
           ],
@@ -1018,12 +1053,43 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "_mergingDelay",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "uint96",
+              "name": "feeNumerator",
+              "type": "uint96"
             }
           ],
-          "name": "setMergingDelay",
+          "name": "setDefaultRoyalty",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "_state",
+              "type": "bool"
+            }
+          ],
+          "name": "setMintStatus",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "value",
+              "type": "bool"
+            }
+          ],
+          "name": "setOperatorFilteringEnabled",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -1044,12 +1110,12 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "_timedSaleDuration",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "_rendererAddress",
+              "type": "address"
             }
           ],
-          "name": "setTimedSaleDuration",
+          "name": "setRendererAddress",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -1057,27 +1123,27 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "_timedSalePrice",
-              "type": "uint256"
+              "internalType": "address",
+              "name": "_thumbnailAddress",
+              "type": "address"
             }
           ],
-          "name": "setTimedSalePrice",
+          "name": "setThumbnailAddress",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
         {
-          "inputs": [
+          "inputs": [],
+          "name": "supply",
+          "outputs": [
             {
               "internalType": "uint256",
-              "name": "_timedSaleThreshold",
+              "name": "",
               "type": "uint256"
             }
           ],
-          "name": "setTimedSaleThreshold",
-          "outputs": [],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -1114,64 +1180,12 @@
         },
         {
           "inputs": [],
-          "name": "timedSaleDuration",
+          "name": "thumbnailAddress",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "address",
               "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "timedSaleEndTimestamp",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "timedSalePrice",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "timedSaleStartedTimestamp",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "timedSaleThreshold",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
+              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -1189,7 +1203,7 @@
           "outputs": [
             {
               "internalType": "string",
-              "name": "",
+              "name": "metadata",
               "type": "string"
             }
           ],
@@ -1197,13 +1211,48 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "totalBurned",
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "tokensOfOwner",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint256[]",
               "name": "",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "start",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stop",
+              "type": "uint256"
+            }
+          ],
+          "name": "tokensOfOwnerIn",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
             }
           ],
           "stateMutability": "view",
@@ -1273,1793 +1322,9 @@
         },
         {
           "inputs": [],
-          "name": "upgradeIntervals",
-          "outputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "",
-              "type": "uint256[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "withdraw",
           "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
-    "VoidableBlackHoles": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_mergeOpenTimestamp",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_renderer",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_unmigratedBlackHoles",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "NotAllowed",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "URIQueryForNonexistentToken",
-          "type": "error"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "approved",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "approved",
-              "type": "bool"
-            }
-          ],
-          "name": "ApprovalForAll",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_fromTokenId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_toTokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "BatchMetadataUpdate",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "MetadataUpdate",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "blackHoleForTokenId",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole",
-              "name": "",
-              "type": "tuple"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokenIds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "blackHolesForTokenIds",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole[]",
-              "name": "",
-              "type": "tuple[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "burn",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "getAdjustmentForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "getApproved",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getUpgradeIntervals",
-          "outputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "",
-              "type": "uint256[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            }
-          ],
-          "name": "isApprovedForAll",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "isMergingEnabled",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "levelForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "massForTokenId",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "massesConsumed",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokens",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "merge",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "mergeOpenTimestamp",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokenIds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "mint",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "name",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_level",
-              "type": "uint256"
-            }
-          ],
-          "name": "nameForBlackHoleLevel",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "owner",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "ownerOf",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renderer",
-          "outputs": [
-            {
-              "internalType": "contract Renderer",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renounceOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "approved",
-              "type": "bool"
-            }
-          ],
-          "name": "setApprovalForAll",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mergeOpenTimestamp",
-              "type": "uint256"
-            }
-          ],
-          "name": "setMergeOpenTimestamp",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokens",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "simulateMerge",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole",
-              "name": "",
-              "type": "tuple"
-            },
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes4",
-              "name": "interfaceId",
-              "type": "bytes4"
-            }
-          ],
-          "name": "supportsInterface",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "symbol",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "tokenURI",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalBurned",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalMinted",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "transferOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "unmigratedBlackHoles",
-          "outputs": [
-            {
-              "internalType": "contract BlackHoles",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]
-    },
-    "BlackHolesV2": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_mergeOpenTimestamp",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_renderer",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_unmigratedBlackHoles",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_voidableBlackHoles",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "NotAllowed",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "NotBlackHolesContract",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "URIQueryForNonexistentToken",
-          "type": "error"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "approved",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "approved",
-              "type": "bool"
-            }
-          ],
-          "name": "ApprovalForAll",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_fromTokenId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_toTokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "BatchMetadataUpdate",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "MetadataUpdate",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "targetId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "totalMass",
-              "type": "uint256"
-            }
-          ],
-          "name": "blackHoleForMass",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole",
-              "name": "",
-              "type": "tuple"
-            },
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "blackHoleForTokenId",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole",
-              "name": "",
-              "type": "tuple"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokenIds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "blackHolesForTokenIds",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "level",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "size",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "mass",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "adjustment",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "name",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct BlackHole[]",
-              "name": "",
-              "type": "tuple[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "burn",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "getAdjustmentForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "getApproved",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getUpgradeIntervals",
-          "outputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "",
-              "type": "uint256[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            }
-          ],
-          "name": "isApprovedForAll",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "isMergingEnabled",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mass",
-              "type": "uint256"
-            }
-          ],
-          "name": "levelForMass",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "massForTokenId",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "massesConsumed",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "tokens",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "merge",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "mergeOpenTimestamp",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract IBlackHoles",
-              "name": "blackHoles",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "tokenIds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "migrate",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "name",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_level",
-              "type": "uint256"
-            }
-          ],
-          "name": "nameForBlackHoleLevel",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "owner",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "ownerOf",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renderer",
-          "outputs": [
-            {
-              "internalType": "contract Renderer",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renounceOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            }
-          ],
-          "name": "safeTransferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "approved",
-              "type": "bool"
-            }
-          ],
-          "name": "setApprovalForAll",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_mergeOpenTimestamp",
-              "type": "uint256"
-            }
-          ],
-          "name": "setMergeOpenTimestamp",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes4",
-              "name": "interfaceId",
-              "type": "bytes4"
-            }
-          ],
-          "name": "supportsInterface",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "symbol",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "tokenURI",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalBurned",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalMinted",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "tokenId",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferFrom",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "transferOwnership",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "unmigratedBlackHoles",
-          "outputs": [
-            {
-              "internalType": "contract IBlackHoles",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "voidableBlackHoles",
-          "outputs": [
-            {
-              "internalType": "contract IBlackHoles",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         }
       ]

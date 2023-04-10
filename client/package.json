@@ -28,7 +28,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build",
+    "predeploy": "wagmi generate && yarn run build",
+    "prestart": "wagmi generate && echo \"declare const schema: $(cat src/deployments.json); export default schema;\" > src/deployments.json.d.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -47,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@wagmi/cli": "^0.1.15"
   }
 }

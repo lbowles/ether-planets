@@ -39,7 +39,7 @@ export const LinksTab = () => {
       </a>
       <a
         target="_blank"
-        href={`https://etherscan.io/address/${deployments.contracts.BlackHolesV2.address}`}
+        href={`https://etherscan.io/address/${deployments.contracts.Planets.address}`}
         onClick={() => {
           linkClickSound()
         }}

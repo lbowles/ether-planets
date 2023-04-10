@@ -3,6 +3,7 @@ import "hardhat-deploy"
 import "@nomiclabs/hardhat-ethers"
 import "@typechain/hardhat"
 import "@nomicfoundation/hardhat-chai-matchers"
+import "@nomiclabs/hardhat-etherscan"
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -62,6 +63,9 @@ const config: HardhatUserConfig = {
       5: "0x70a78d91A434C1073D47b2deBe31C184aA8CA9Fa",
       1: "0xFc7453dA7bF4d0c739C1c53da57b3636dAb0e11e",
     },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY || "",
   },
 }
 

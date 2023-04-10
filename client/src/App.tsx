@@ -17,6 +17,7 @@ import mintEffect from "./sounds/mint.mp3"
 import blockSpinner from "./img/blockSpinner.svg"
 import { Footer } from "./components/Footer"
 import { LandingCopy } from "./components/LandingCopy"
+import { LinksTab } from "./components/LinksTab"
 
 const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
 
@@ -148,10 +149,13 @@ function App() {
 
   return (
     <div className="App">
-      <div className="relative w-full flex justify-end z-10 p-5">
+      <LandingCopy htmlFileURL={htmlFileURL} />
+
+      <div className="absolute w-full  top-0 flex justify-end z-20 p-5">
         <ConnectButton />
       </div>
-      <LandingCopy htmlFileURL={htmlFileURL} />
+      {/* <LinksTab /> */}
+
       <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
           <div className="text-center text-[12px] pb-5 text-white">3/4242</div>

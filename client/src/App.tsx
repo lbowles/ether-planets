@@ -75,16 +75,24 @@ function App() {
     setTotalPrice(bigNumber?.mul(amount))
   }
 
+  const toggelCustomAmount = () => {
+    if (isCustomVisible) {
+      setIsCustomVisible(false)
+    } else {
+      setIsCustomVisible(true)
+    }
+  }
+
   return (
     <div className="App">
       <div className="relative w-full flex justify-end z-10 p-5">
         <ConnectButton />
       </div>
       <div className="front-content">
-        <div className="text-white flex justify-center text-3xl pt-[6vh] sm:pt-[17vh]">
+        <div className="text-white flex justify-center text-3xl pt-[5vh] sm:pt-[17vh]">
           <div style={{ fontFamily: "arial", marginTop: "1px" }}>Ξ</div>PLANETS
         </div>
-        <div className="text-gray-400 flex justify-center text-lg pt-6 text-center ">
+        <div className="text-gray-400 flex justify-center sm:text-lg text-[16px] pt-6 text-center px-3 ">
           Fully on-chain, procedurally generated, 3D planets.
         </div>
       </div>
@@ -95,9 +103,9 @@ function App() {
         style={{ border: "none" }}
         scrolling="no"
       ></iframe>
-      <div className="absolute sm:bottom-[25%] bottom-[21%] w-full  flex justify-center">
+      <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
-          <div className="text-center text-[12px] pb-4 text-white">3/4242</div>
+          <div className="text-center text-[12px] pb-5 text-white">3/4242</div>
           <div className="flex justify-center">
             <button
               className="text-gray-500 text-[36px] mt-[-5px] hover:text-white"
@@ -130,7 +138,7 @@ function App() {
                 //     ? `MINT ${mintCount} FOR ${ethers.utils.formatEther(totalPrice)} ETH`
                 //     : "PRICE UNAVAILABLE"
                 // }
-                <>{mintCount}</>
+                <>Mint {mintCount} for 23 ETH </>
               )}
             </button>
             <button
@@ -146,6 +154,42 @@ function App() {
               +
             </button>
           </div>
+          {/* TODO change to account.isConnected */}
+          {true && (
+            <>
+              <div className="w-full justify-center flex mt-1 transition-all">
+                <button
+                  // TODO: disabled={isMintSignLoading || isMintTxLoading}
+                  className=" text-[12px] text-gray-500 hover:text-white transition-all text-right"
+                  onClick={() => {
+                    toggelCustomAmount()
+                    generalClickSound()
+                  }}
+                >
+                  {isCustomVisible ? <>Hide</> : <>Custom amount</>}
+                </button>
+              </div>
+              <div className="w-full justify-center flex mt-1 transition-all">
+                <input
+                  // TODO: isCustomVisible && !isMintSignLoading && !isMintTxLoading ? "visible" : "hidden"
+                  className={`text-white block rounded text-[12px] appearance-none bg-black border border-gray-500 hover:border-blue-950 focus:border-blue-900 px-3 py-1 leading-tight focus:outline-none w-[70px] mb-2 transition-all ${
+                    isCustomVisible ? "visible" : "hidden"
+                  }`}
+                  type="number"
+                  placeholder={mintCount.toString()}
+                  onChange={(e) => {
+                    let value = parseInt(e.target.value)
+                    if (e.target.value === "" || value === 0) {
+                      handleMintAmountChange(1)
+                    } else {
+                      handleMintAmountChange(value)
+                      handleAmountClick(value)
+                    }
+                  }}
+                ></input>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="absolute bottom-[2%]  w-full  flex justify-center text-sm text-gray-600">

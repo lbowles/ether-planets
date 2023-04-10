@@ -9,14 +9,15 @@
 
 pragma solidity ^0.8.18;
 
-import "./Base.sol";
 import "./PlanetsThumbnail.sol";
 import "./Utilities.sol";
 import "./interfaces/IPlanets.sol";
 import "./interfaces/IPlanetsRenderer.sol";
 import "scripty.sol/contracts/scripty/IScriptyBuilder.sol";
+import {ERC721A} from "erc721a/contracts/ERC721A.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Planets is Base {
+contract Planets is ERC721A, Ownable {
   uint256 public immutable supply;
   address public thumbnailAddress;
   address public rendererAddress;
@@ -24,12 +25,14 @@ contract Planets is Base {
   uint256 public price;
   bool public isOpen;
 
+  bool public finalized;
+
   error MintClosed();
   error SoldOut();
   error InsufficientFunds();
-  error WalletMax();
   error TokenDoesntExist();
   error RefundFailed();
+  error Finalized();
 
   constructor(
     string memory name,
@@ -38,7 +41,7 @@ contract Planets is Base {
     uint256 _price,
     address _thumbnailAddress,
     address _rendererAddress
-  ) Base(name, symbol) {
+  ) ERC721A(name, symbol) {
     thumbnailAddress = _thumbnailAddress;
     rendererAddress = _rendererAddress;
 
@@ -63,9 +66,9 @@ contract Planets is Base {
    * @param _quantity Quantity of tokens to mint.
    */
   function mint(uint256 _quantity) public payable {
-    if (msg.value < price * _quantity) revert InsufficientFunds();
+    if (!isOpen) revert MintClosed();
     if (totalMinted() + _quantity > supply) revert SoldOut();
-    if (_numberMinted(msg.sender) + _quantity > 20) revert WalletMax();
+    if (msg.value < price * _quantity) revert InsufficientFunds();
 
     _mint(msg.sender, _quantity);
 
@@ -97,6 +100,7 @@ contract Planets is Base {
    * @param _thumbnailAddress - Address of the thumbnail contract.
    */
   function setThumbnailAddress(address _thumbnailAddress) external onlyOwner {
+    if (finalized) revert Finalized();
     thumbnailAddress = _thumbnailAddress;
   }
 
@@ -105,6 +109,7 @@ contract Planets is Base {
    * @param _rendererAddress - Address of the renderer contract.
    */
   function setRendererAddress(address _rendererAddress) external onlyOwner {
+    if (finalized) revert Finalized();
     rendererAddress = _rendererAddress;
   }
 
@@ -114,6 +119,10 @@ contract Planets is Base {
    */
   function setMintStatus(bool _state) external onlyOwner {
     isOpen = _state;
+  }
+
+  function finalize() external onlyOwner {
+    finalized = true;
   }
 
   /**
@@ -250,7 +259,7 @@ contract Planets is Base {
    * @param _tokenId - TokenId to build coaster for
    * @return metadata - as string
    */
-  function tokenURI(uint256 _tokenId) public view virtual override(ERC721A, IERC721A) returns (string memory metadata) {
+  function tokenURI(uint256 _tokenId) public view virtual override(ERC721A) returns (string memory metadata) {
     // show nothing if token doesnt exist
     if (!_exists(_tokenId)) revert TokenDoesntExist();
 

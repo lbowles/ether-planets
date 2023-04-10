@@ -17,6 +17,7 @@ describe("Planets", function () {
     const EtherPlanets = await deployments.get("Planets")
     etherPlanets = Planets__factory.connect(EtherPlanets.address, signers[0]) as Planets
     mintPrice = await etherPlanets.price()
+    await etherPlanets.setMintStatus(true)
   })
 
   it("Should have the correct price set in the constructor", async function () {
@@ -157,5 +158,55 @@ describe("Planets", function () {
 
     // Check if recipient's balance has increased
     expect(await etherPlanets.balanceOf(signers[0].address)).to.equal(1)
+  })
+
+  it("Should not mint if not isOpen", async function () {
+    // Close the contract
+    await etherPlanets.setMintStatus(false)
+    const isOpen = await etherPlanets.isOpen()
+
+    expect(isOpen).to.equal(false)
+
+    // Try to mint
+    await expect(etherPlanets.mint(1, { value: mintPrice })).to.be.revertedWithCustomError(etherPlanets, "MintClosed")
+
+    // Open the contract
+    await etherPlanets.setMintStatus(true)
+
+    // Check if contract is open
+    expect(await etherPlanets.isOpen()).to.equal(true)
+
+    // Mint
+    expect(await etherPlanets.mint(1, { value: mintPrice })).to.emit(etherPlanets, "Transfer")
+  })
+
+  it("Should not be able to update renderer and thumbnail if finalized", async function () {
+    // Finalized should be false
+    expect(await etherPlanets.finalized()).to.equal(false)
+
+    await etherPlanets.setRendererAddress(signers[1].address)
+
+    // Check if renderer has been updated
+    expect(await etherPlanets.rendererAddress()).to.equal(signers[1].address)
+
+    await etherPlanets.setThumbnailAddress(signers[1].address)
+
+    // Check if thumbnail has been updated
+    expect(await etherPlanets.thumbnailAddress()).to.equal(signers[1].address)
+
+    // Finalize
+    await etherPlanets.finalize()
+
+    // Try to update renderer
+    await expect(etherPlanets.setRendererAddress(signers[1].address)).to.be.revertedWithCustomError(
+      etherPlanets,
+      "Finalized",
+    )
+
+    // Try to update thumbnail
+    await expect(etherPlanets.setThumbnailAddress(signers[1].address)).to.be.revertedWithCustomError(
+      etherPlanets,
+      "Finalized",
+    )
   })
 })

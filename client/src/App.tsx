@@ -183,7 +183,7 @@ function App() {
       />
       <LinksTab />
       <LandingCopy htmlFileURL={htmlFileURL} />
-      <div className="absolute w-full  top-0 flex justify-end z-20 p-5">
+      <div className="absolute w-full  top-0 flex justify-end z-20 p-3 sm:p-5">
         <ConnectButton />
       </div>
       {/* <LinksTab /> */}

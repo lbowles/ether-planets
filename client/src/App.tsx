@@ -177,7 +177,7 @@ function App() {
             ... &nbsp;
             <span key={tokens[tokens.length - 1]}>
               <a
-                href={getOpenSeaLink(deployments.chainId, tokens[tokens.length - 1])}
+                href={getOpenSeaLink(deployments.contracts.Planets.address, tokens[tokens.length - 1])}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white hover:underline no-underline transition-colors"

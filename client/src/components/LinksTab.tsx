@@ -12,7 +12,7 @@ export const LinksTab = () => {
     <div className="bg-black z-10 absolute  border-r border-y rounded-r border-gray-800 p-[10px]  grid grid-flow-row top-[50%] transform -translate-y-1/2 gap-3">
       <a
         target="_blank"
-        href="https://opensea.io/collection/onchain-blackholes-v1"
+        href="#"
         onClick={() => {
           linkClickSound()
         }}
@@ -30,7 +30,7 @@ export const LinksTab = () => {
       </a>
       <a
         target="_blank"
-        href="https://github.com/lbowles/black-hole-nft"
+        href="https://github.com/lbowles/ether-planets"
         onClick={() => {
           linkClickSound()
         }}

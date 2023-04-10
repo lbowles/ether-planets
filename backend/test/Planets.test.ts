@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { expect } from "chai"
 import { BigNumber } from "ethers"
+import { XMLParser } from "fast-xml-parser"
 import { deployments, ethers } from "hardhat"
 import { Planets, Planets__factory } from "../types"
 
@@ -39,7 +40,7 @@ describe("Planets", function () {
     initialSupply = await etherPlanets.totalSupply()
   })
 
-  it.only("Should return the correct token URI for a given token ID", async function () {
+  it("Should return the correct token URI for a given token ID", async function () {
     // Mint a new token
     await etherPlanets.mint(1, { value: mintPrice })
 
@@ -52,21 +53,20 @@ describe("Planets", function () {
     // Decode base64 encoded json
     const json = JSON.parse(metadata.split("data:application/json,", 2)[1])
 
-    console.log(json.attributes)
+    // console.log(json.attributes)
 
     expect(json.name).to.equal(name)
     expect(json.description).to.equal(description)
     expect(json.image).to.contain("data:image/svg+xml;base64")
 
-    console.log(json.image)
+    // console.log(json.image)
 
     expect(json.animation_url).to.contain("data%3Atext")
-    // expect(json.attributes)
 
-    // // console.log(json.image)
-    // const svg = Buffer.from(json.image.split(",")[1], "base64").toString()
-    // const parser = new XMLParser()
-    // expect(parser.parse(svg, true)).to.not.throw
+    // Check SVG validity
+    const svg = Buffer.from(json.image.split(",")[1], "base64").toString()
+    const parser = new XMLParser()
+    expect(parser.parse(svg, true)).to.not.throw
   })
 
   it("Should allow the owner to withdraw their balance", async function () {
@@ -82,27 +82,27 @@ describe("Planets", function () {
     await expect(etherPlanets.connect(signers[1]).withdraw()).to.be.revertedWith("Ownable: caller is not the owner")
   })
 
-  // it("Should allow the owner to airdrop to an array of recipients", async function () {
-  //   const [owner, recipient1, recipient2] = signers
-  //   const initialSupply = await etherPlanets.totalSupply()
-  //   const recipients = [recipient1.address, recipient2.address]
-  //   const quantity = 10
-  //   await etherPlanets.connect(owner).airdrop(recipients, quantity)
-  //   const finalSupply = await etherPlanets.totalSupply()
-  //   expect(finalSupply).to.equal(initialSupply.add(recipients.length * quantity))
+  it("Should allow the owner to airdrop to an array of recipients", async function () {
+    const [owner, recipient1, recipient2] = signers
+    const initialSupply = await etherPlanets.totalSupply()
+    const recipients = [recipient1.address, recipient2.address]
+    const quantity = 10
+    await etherPlanets.connect(owner).airdrop(recipients, quantity)
+    const finalSupply = await etherPlanets.totalSupply()
+    expect(finalSupply).to.equal(initialSupply.add(recipients.length * quantity))
 
-  //   // Check if recipient's balance has increased
-  //   expect(await etherPlanets.balanceOf(recipient1.address)).to.equal(quantity)
-  //   expect(await etherPlanets.balanceOf(recipient2.address)).to.equal(quantity)
-  // })
+    // Check if recipient's balance has increased
+    expect(await etherPlanets.balanceOf(recipient1.address)).to.equal(quantity)
+    expect(await etherPlanets.balanceOf(recipient2.address)).to.equal(quantity)
+  })
 
-  // it("Should not allow a non-owner to airdrop to an array of recipients", async function () {
-  //   const recipients = [signers[1].address]
-  //   const quantity = 10
-  //   await expect(etherPlanets.connect(signers[1]).airdrop(recipients, quantity)).to.be.revertedWith(
-  //     "Ownable: caller is not the owner",
-  //   )
-  // })
+  it("Should not allow a non-owner to airdrop to an array of recipients", async function () {
+    const recipients = [signers[1].address]
+    const quantity = 10
+    await expect(etherPlanets.connect(signers[1]).airdrop(recipients, quantity)).to.be.revertedWith(
+      "Ownable: caller is not the owner",
+    )
+  })
 
   it("Should set the price correctly", async function () {
     // Get current price
@@ -137,11 +137,11 @@ describe("Planets", function () {
       .and.gt(initialBalance.sub(mintPrice.mul(10)))
   })
 
-  it("Should mint in timed sale", async function () {
-    // Trigger timed sale
+  it("Should mint", async function () {
+    // Get price
     mintPrice = await etherPlanets.price()
 
-    // Mint in timed sale
+    // Mint
     const initialSupply = await etherPlanets.totalSupply()
 
     // Get new price

@@ -5,7 +5,7 @@ export const Footer = () => {
   const [linkClickSound] = useSound(linkClickEffect)
 
   return (
-    <div className="absolute bottom-[2%]  w-full  flex justify-center text-sm text-gray-600">
+    <div className="absolute bottom-[2%]  w-full  flex justify-center sm:text-sm text-[12px]  text-gray-600">
       Made by
       <a
         href="https://twitter.com/npm_luko"

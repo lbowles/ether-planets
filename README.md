@@ -1,4 +1,4 @@
-# Black Holes
+# ΞPlanets
 
 This is the code repository for Ether Planets, a fully on-chain, procedurally generated, 3D Planets. 
 
@@ -16,7 +16,7 @@ This is the code repository for Ether Planets, a fully on-chain, procedurally ge
 - wagmi
 - RainbowKit
 
-# Ether Planets
+# ΞPlanets
 
 ## Development
 

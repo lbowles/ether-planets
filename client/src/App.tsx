@@ -255,6 +255,8 @@ function App() {
                     isCustomVisible ? "visible" : "hidden"
                   }`}
                   type="number"
+                  min="1"
+                  max="4000"
                   placeholder={mintCount.toString()}
                   onChange={(e) => {
                     let value = parseInt(e.target.value)

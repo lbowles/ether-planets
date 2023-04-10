@@ -25,7 +25,7 @@
       }
 
       function getPlanet(planetSize) {
-        return `<g transform-origin="69 72" transform="translate(-26,-20),translate(182,200),scale(${
+        return `<g transform-origin="72 60" transform="translate(-26,-20),translate(200,200),scale(${
           planetSize / 40
         })">${PLANET}</g>`
       }
@@ -95,7 +95,7 @@
 
       let seed = randomRange(0, 1000000)
       let planetSize = randomRange(30, 100) // random(30, 170)
-      let hasRings = randomRange(0, 10) === 5 // random() < 0.5 // 50% chance
+      let hasRings = true //randomRange(0, 10) === 5 // random() < 0.5 // 50% chance
       let numMoons = randomRange(0, 3) // floor(random(0, 5)) // Up to 3 moons
       let planetType = randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
       let baseHue = randomRange(0, 360)

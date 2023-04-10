@@ -11,7 +11,7 @@ import deployments from "./deployments.json"
 import useSound from "use-sound"
 import { getOpenSeaLink } from "./utils/getOpenSeaLink"
 import NoticeModal from "./components/NoticeModal"
-
+import submitEffect from "./sounds/submit.mp3"
 import smallClickEffect from "./sounds/smallClick.mp3"
 import generalClickEffect from "./sounds/generalClick.mp3"
 import mintEffect from "./sounds/mint.mp3"
@@ -36,11 +36,13 @@ function App() {
   const [mintBtnLoading, setMintBtnLoading] = useState<boolean>(false)
   const [isCustomVisible, setIsCustomVisible] = useState<boolean>(false)
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
-  const [playbackRate, setPlaybackRate] = useState(0.75)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  const [playbackRate, setPlaybackRate] = useState(0.5)
   const [smallClickSound] = useSound(smallClickEffect, { playbackRate: playbackRate })
   const [generalClickSound] = useSound(generalClickEffect)
   const [mintSound] = useSound(mintEffect)
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [submitSound] = useSound(submitEffect)
 
   // const {
   //   write: mint,
@@ -96,6 +98,21 @@ function App() {
       setIsCustomVisible(true)
     }
   }
+
+  // useEffect(() => {
+  //   const loading = priceLoading || mintStateLoading || amountMintedLoading || isMintTxLoading
+  //   setMintBtnLoading(loading)
+  // }, [priceLoading, mintStateLoading, amountMintedLoading, isMintTxLoading])
+
+  // useEffect(() => {
+  //   if (mintSignResult) {
+  //     addRecentTransaction({
+  //       hash: mintSignResult.hash,
+  //       description: `Mint ${mintCount} Black Hole${mintCount === 1 ? "" : "s"}`,
+  //     })
+  //     submitSound()
+  //   }
+  // }, [mintSignResult])
 
   // TODO: useEffect(() => {
   //   if (mintTx?.status === 1) {

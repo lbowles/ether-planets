@@ -21,7 +21,7 @@ export const LinksTab = () => {
       </a>
       <a
         target="_blank"
-        href="https://twitter.com/0xBlackHoles"
+        href="https://twitter.com/0xEtherPlanets"
         onClick={() => {
           linkClickSound()
         }}

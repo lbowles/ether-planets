@@ -21,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+src/deployments.json.d.ts
+src/generated.ts
+src/deployments.json

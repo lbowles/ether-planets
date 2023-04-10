@@ -1,31 +1,39 @@
-import React from "react"
-import logo from "./logo.svg"
-import { useEffect, useState } from "react"
-import "./App.css"
-import { BigNumber, ethers } from "ethers"
+import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit"
 import "@rainbow-me/rainbowkit/styles.css"
-import { ConnectButton } from "@rainbow-me/rainbowkit"
-import { useAddRecentTransaction } from "@rainbow-me/rainbowkit"
-import { useAccount, useWaitForTransaction } from "wagmi"
-import deployments from "./deployments.json"
+import { BigNumber, ethers } from "ethers"
+import { useEffect, useState } from "react"
 import useSound from "use-sound"
-import { getOpenSeaLink } from "./utils/getOpenSeaLink"
-import NoticeModal from "./components/NoticeModal"
-import submitEffect from "./sounds/submit.mp3"
-import smallClickEffect from "./sounds/smallClick.mp3"
-import generalClickEffect from "./sounds/generalClick.mp3"
-import mintEffect from "./sounds/mint.mp3"
-import blockSpinner from "./img/blockSpinner.svg"
+import { useAccount, useWaitForTransaction } from "wagmi"
+import "./App.css"
 import { Footer } from "./components/Footer"
 import { LandingCopy } from "./components/LandingCopy"
 import { LinksTab } from "./components/LinksTab"
+import NoticeModal from "./components/NoticeModal"
+import deployments from "./deployments.json"
+import {
+  usePlanetsIsOpen,
+  usePlanetsMint,
+  usePlanetsPrice,
+  usePlanetsTotalMinted,
+  usePlanetsTotalSupply,
+  usePreparePlanetsMint,
+} from "./generated"
+import blockSpinner from "./img/blockSpinner.svg"
+import generalClickEffect from "./sounds/generalClick.mp3"
+import mintEffect from "./sounds/mint.mp3"
+import smallClickEffect from "./sounds/smallClick.mp3"
+import submitEffect from "./sounds/submit.mp3"
+import { getEtherscanBaseURL } from "./utils/getEtherscanBaseURL"
+import { getOpenSeaLink } from "./utils/getOpenSeaLink"
 
+const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
 
 function App() {
-  // const { data: mintPrice, isLoading: priceLoading } = useBlackHolesGetPrice({ watch: true })
-  // const { data: mintState, isLoading: mintStateLoading } = useBlackHolesGetMintState({ watch: true })
-  //const { data: amountMinted, isLoading: amountMintedLoading } = useBlackHolesTotalMinted({ watch: true })
+  const { data: mintPrice, isLoading: priceLoading } = usePlanetsPrice({ watch: true })
+  const { data: isOpen, isLoading: isIsOpenLoading } = usePlanetsIsOpen({ watch: true })
+  const { data: amountMinted, isLoading: amountMintedLoading } = usePlanetsTotalMinted({ watch: true })
+  const { data: totalSupply, isLoading: totalSupplyLoading } = usePlanetsTotalSupply()
 
   const addRecentTransaction = useAddRecentTransaction()
   const account = useAccount()
@@ -44,17 +52,25 @@ function App() {
   const [mintSound] = useSound(mintEffect)
   const [submitSound] = useSound(submitEffect)
 
-  // const {
-  //   write: mint,
-  //   data: mintSignResult,
-  //   isLoading: isMintSignLoading,
-  //   isSuccess: isMintSignSuccess,
-  // } = useBlackHolesMint(mintConfig)
+  const { config: mintConfig, error: mintError } = usePreparePlanetsMint({
+    args: [BigNumber.from(`${mintCount}`)],
+    overrides: {
+      value: mintPrice?.mul(mintCount!),
+    },
+    enabled: isOpen !== undefined && isOpen,
+  })
 
-  // const { data: mintTx, isLoading: isMintTxLoading } = useWaitForTransaction({
-  //   hash: mintSignResult?.hash,
-  //   confirmations: 1,
-  // })
+  const {
+    write: mint,
+    data: mintSignResult,
+    isLoading: isMintSignLoading,
+    isSuccess: isMintSignSuccess,
+  } = usePlanetsMint(mintConfig)
+
+  const { data: mintTx, isLoading: isMintTxLoading } = useWaitForTransaction({
+    hash: mintSignResult?.hash,
+    confirmations: 1,
+  })
 
   const handleAmountClick = (value: number) => {
     let tempPlaybackRate = playbackRate
@@ -85,10 +101,7 @@ function App() {
 
   const handleMintAmountChange = (amount: number) => {
     setMintAmount(amount)
-    //TODO: change with mintPrince    bigNumber?.mul(amount)
-    const numberAsString = "42"
-    const bigNumber = BigNumber.from(numberAsString)
-    setTotalPrice(bigNumber?.mul(amount))
+    setTotalPrice(mintPrice?.mul(amount))
   }
 
   const toggelCustomAmount = () => {
@@ -99,44 +112,49 @@ function App() {
     }
   }
 
-  // useEffect(() => {
-  //   const loading = priceLoading || mintStateLoading || amountMintedLoading || isMintTxLoading
-  //   setMintBtnLoading(loading)
-  // }, [priceLoading, mintStateLoading, amountMintedLoading, isMintTxLoading])
+  useEffect(() => {
+    const loading = priceLoading || isIsOpenLoading || amountMintedLoading || isMintTxLoading
+    setMintBtnLoading(loading)
+  }, [priceLoading, isIsOpenLoading, amountMintedLoading, isMintTxLoading])
 
-  // useEffect(() => {
-  //   if (mintSignResult) {
-  //     addRecentTransaction({
-  //       hash: mintSignResult.hash,
-  //       description: `Mint ${mintCount} Black Hole${mintCount === 1 ? "" : "s"}`,
-  //     })
-  //     submitSound()
-  //   }
-  // }, [mintSignResult])
+  useEffect(() => {
+    if (mintSignResult) {
+      addRecentTransaction({
+        hash: mintSignResult.hash,
+        description: `Mint ${mintCount} Ether Planet${mintCount === 1 ? "" : "s"}`,
+      })
+      submitSound()
+    }
+  }, [mintSignResult])
 
-  // TODO: useEffect(() => {
-  //   if (mintTx?.status === 1) {
-  //     //TODO: mintSound()
-  //     const tokenIds = mintTx.logs
-  //       .map((log) => {
-  //         try {
-  //           const events = BlackHoles__factory.createInterface().decodeEventLog("Transfer", log.data, log.topics)
-  //           return events.tokenId.toString()
-  //         } catch (e) {
-  //           return null
-  //         }
-  //       })
-  //       .filter((id) => id !== null)
-  //     setMintedTokens(tokenIds)
-  //   }
-  // }, [mintTx])
+  useEffect(() => {
+    if (mintTx?.status === 1) {
+      mintSound()
+      const transferEventAbi = ["event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"]
+      const transferEventInterface = new ethers.utils.Interface(transferEventAbi)
+
+      const tokenIds = mintTx.logs
+        .map((log) => {
+          try {
+            const event = transferEventInterface.parseLog(log)
+            if (event && event.name === "Transfer") {
+              return event.args.tokenId.toString()
+            }
+          } catch (e) {
+            return null
+          }
+        })
+        .filter((id) => id !== null)
+      setMintedTokens(tokenIds)
+    }
+  }, [mintTx])
 
   const displayMintedTokens = (tokens: number[]) => {
     return (
       <>
         <span key={tokens[0]}>
           <a
-            href={getOpenSeaLink(deployments.contracts.BlackHoles.address, tokens[0])}
+            href={getOpenSeaLink(deployments.contracts.Planets.address, tokens[0])}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white hover:underline no-underline transition-colors"
@@ -178,7 +196,7 @@ function App() {
           generalClickSound()
           console.log("test mint")
           setIsModalOpen(false)
-          //TODO: mint?.()
+          mint?.()
         }}
       />
       <LinksTab />
@@ -189,7 +207,12 @@ function App() {
       {/* <LinksTab /> */}
       <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
-          <div className="text-center text-[12px] pb-5 text-white">3/4242</div>
+          {amountMinted && totalSupply && (
+            <div className="text-center text-[12px] pb-5 text-white">
+              {amountMinted.toBigInt().toLocaleString()}/{totalSupply.toBigInt().toLocaleString()}
+            </div>
+          )}
+
           <div className="flex justify-center">
             <button
               className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3"
@@ -198,7 +221,7 @@ function App() {
                 setIsCustomVisible(false)
                 handleAmountClick(mintCount - 1)
               }}
-              // TODO: disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+              disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
             >
               -
             </button>
@@ -209,27 +232,28 @@ function App() {
                 setIsCustomVisible(false)
               }}
               className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px] mx-2"
-              //TODO: disabled={disabled || loading}
+              disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading}
             >
               {mintBtnLoading ? (
                 <div className="w-full flex justify-center h-full">
                   <img className="h-full p-[12px]" src={blockSpinner}></img>
                 </div>
               ) : (
-                // TODO:  {isMintSignLoading
-                //     ? "WAITING FOR WALLET"
-                //     : !account.isConnected
-                //     ? "CONNECT WALLET"
-                //     : totalPrice !== undefined
-                //     ? `MINT ${mintCount} FOR ${ethers.utils.formatEther(totalPrice)} ETH`
-                //     : "PRICE UNAVAILABLE"
-                // }
-                <>Mint {mintCount} for 23 ETH </>
+                <>
+                  {isMintSignLoading
+                    ? "WAITING FOR WALLET"
+                    : !account.isConnected
+                    ? "CONNECT WALLET"
+                    : totalPrice !== undefined
+                    ? `MINT ${mintCount} FOR ${ethers.utils.formatEther(totalPrice)} ETH`
+                    : "PRICE UNAVAILABLE"}
+                </>
+                // <>Mint {mintCount} for 23 ETH </>
               )}
             </button>
             <button
-              //TODO: disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
-              className="text-gray-500 text-3xl pr-3 hover:text-white "
+              disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+              className="text-gray-500 text-3xl pr-3 hover:text-white"
               onClick={() => {
                 handleMintAmountChange(mintCount + 1)
                 setIsCustomVisible(false)
@@ -240,12 +264,11 @@ function App() {
               +
             </button>
           </div>
-          {/* TODO change to account.isConnected */}
-          {true && (
+          {account.isConnected && (
             <>
               <div className="w-full justify-center flex mt-1 transition-all">
                 <button
-                  // TODO: disabled={isMintSignLoading || isMintTxLoading}
+                  disabled={isMintSignLoading || isMintTxLoading}
                   className=" text-[12px] text-gray-500 hover:text-white transition-all text-right"
                   onClick={() => {
                     toggelCustomAmount()
@@ -257,9 +280,8 @@ function App() {
               </div>
               <div className="w-full justify-center flex mt-1 transition-all">
                 <input
-                  // TODO: isCustomVisible && !isMintSignLoading && !isMintTxLoading ? "visible" : "hidden"
                   className={`text-white block rounded text-[12px] appearance-none bg-black border border-gray-500 hover:border-blue-950 focus:border-blue-900 px-3 py-1 leading-tight focus:outline-none w-[70px] mb-2 transition-all ${
-                    isCustomVisible ? "visible" : "hidden"
+                    isCustomVisible && !isMintSignLoading && !isMintTxLoading ? "visible" : "hidden"
                   }`}
                   type="number"
                   min="1"
@@ -279,11 +301,11 @@ function App() {
             </>
           )}
         </div>
-        {/* TODO {mintTx && mintTx.status && (
+        {mintTx && mintTx.status && (
           <div>
             <div className="w-full flex justify-center">
               <a
-                //TODO: href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
+                href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-base text-gray-500 hover:text-white hover:underline no-underline transition-colors pt-5"
@@ -295,7 +317,7 @@ function App() {
               Minted tokens: [ {displayMintedTokens(mintedTokens)}]
             </p>
           </div>
-        )} */}
+        )}
       </div>
       <Footer />
     </div>

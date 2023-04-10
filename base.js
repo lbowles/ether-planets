@@ -167,11 +167,6 @@ function generateTexture(elevationThresholds, colors, planetType) {
       textureImg.set(x, y, col)
     }
   }
-  // console.log(
-  //   `Water count: ${Math.round((waterCount / (textureImg.width * textureImg.height)) * 100)}% (${waterCount}/${
-  //     textureImg.width * textureImg.height
-  //   })`,
-  // )
   textureImg.updatePixels()
   return textureImg
 }

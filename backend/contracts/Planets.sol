@@ -18,6 +18,7 @@ import {ERC721A} from "erc721a/contracts/ERC721A.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Planets is ERC721A, Ownable {
+  uint256 public immutable deployBlock;
   uint256 public immutable supply;
   address public thumbnailAddress;
   address public rendererAddress;
@@ -47,6 +48,8 @@ contract Planets is ERC721A, Ownable {
 
     supply = _supply;
     price = _price;
+
+    deployBlock = block.number;
   }
 
   /**
@@ -150,24 +153,26 @@ contract Planets is ERC721A, Ownable {
    * @param _tokenId - Token ID for seed value
    * @return settings - All settings as a struct
    */
-  function buildSettings(uint256 _tokenId) public pure returns (Settings memory settings) {
-    settings.seed = utils.randomRange(_tokenId, "seed", 1, 1000000);
+  function buildSettings(uint256 _tokenId) public view returns (Settings memory settings) {
+    uint256 randomSeed = _tokenId + deployBlock;
+
+    settings.seed = utils.randomRange(randomSeed, "seed", 1, 1000000);
     settings.vars[0] = formatVar("seed", settings.seed);
 
-    settings.planetSize = utils.randomRange(_tokenId, "planetSize", 30, 100);
+    settings.planetSize = utils.randomRange(randomSeed, "planetSize", 30, 100);
     settings.vars[1] = formatVar("planetSize", settings.planetSize);
 
     // 40% gas, 60% rock
-    settings.planetType = utils.randomRange(_tokenId, "planetType", 0, 10) < 4 ? PlanetType.GAS : PlanetType.SOLID;
+    settings.planetType = utils.randomRange(randomSeed, "planetType", 0, 10) < 4 ? PlanetType.GAS : PlanetType.SOLID;
     settings.vars[4] = formatVar("planetType", uint256(settings.planetType));
 
     // 30% of gaseous planets;
-    settings.hasRings = settings.planetType == PlanetType.GAS && utils.randomRange(_tokenId, "hasRings", 0, 10) < 3;
+    settings.hasRings = settings.planetType == PlanetType.GAS && utils.randomRange(randomSeed, "hasRings", 0, 10) < 3;
     settings.vars[2] = formatVar("hasRings", settings.hasRings ? 1 : 0);
 
     {
       // 25% 1 moon, 12% 2 moons, 3% 3 moons
-      uint256 observation = utils.randomRange(_tokenId, "numMoons", 0, 100);
+      uint256 observation = utils.randomRange(randomSeed, "numMoons", 0, 100);
       if (observation < 25) settings.numMoons = 1;
       else if (observation < 37) settings.numMoons = 2;
       else if (observation < 40) settings.numMoons = 3;
@@ -175,11 +180,11 @@ contract Planets is ERC721A, Ownable {
       settings.vars[3] = formatVar("numMoons", settings.numMoons);
     }
 
-    settings.hue = utils.randomRange(_tokenId, "baseHue", 0, 360);
+    settings.hue = utils.randomRange(randomSeed, "baseHue", 0, 360);
     settings.vars[5] = formatVar("baseHue", settings.hue);
 
     // If rocky, 30% water
-    settings.hasWater = settings.planetType == PlanetType.SOLID && utils.randomRange(_tokenId, "hasWater", 0, 10) < 3;
+    settings.hasWater = settings.planetType == PlanetType.SOLID && utils.randomRange(randomSeed, "hasWater", 0, 10) < 3;
     settings.vars[6] = formatVar("hasWater", settings.hasWater ? 1 : 0);
 
     return settings;

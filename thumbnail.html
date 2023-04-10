@@ -11,10 +11,14 @@
     <div id="canvasContainer"></div>
     <script>
       const CANVAS_SIZE = 500
-
       const BACKGROUND = `<g fill="#fff"><circle cx="50" cy="100" r="2" fill="#fff"/><circle cx="200" cy="150" r="2" fill="#fff"/><circle cx="300" cy="250" r="2" fill="#fff"/><circle cx="400" cy="75" r="2" fill="#fff"/><circle cx="175" cy="200" r="2" fill="#fff"/><circle cx="450" cy="350" r="2" fill="#fff"/><circle cx="125" cy="400" r="2" fill="#fff"/><circle cx="375" cy="300" r="2" fill="#fff"/><circle cx="225" cy="375" r="2" fill="#fff"/><circle cx="75" cy="250" r="2" fill="#fff"/><circle cx="25" cy="25" r="2" fill="#fff"/></g>`
-
       const ROCKY_PLANET = `<path class="rings" stroke-width="15" d="M312 124c0-12.15-68.053-22-152-22S8 111.85 8 124"/><circle cx="159" cy="105" r="105" class="body"/><mask id="a" width="210" height="210" x="54" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha"><circle cx="159" cy="105" r="105" fill="#AC0000"/></mask><g class="water" mask="url(#a)"><path d="M176.497 59.5c1-4.333 5.1-16.9 13.5-32.5 6.402-4 22.67-6.333 30.003-7h29.5L281 72.5l-18.5 51H261c-1.2 1.2-4.5 1.167-6 1L234.5 113c-3.501-10-17.303-29.4-44.503-27-27.2 2.4-20.333-16.667-13.5-26.5ZM70 98.5c-6.8-2.8-13.167 5.167-15.5 9.5l-6 3 4.5 48.5 53.5 44c3.333-3.833 10.5-13.4 12.5-21 2.5-9.5-7-16.5-14.5-19.5s-4-18-1.5-24-7-18-17.5-24-7-13-15.5-16.5Z"/></g><path class="rings" stroke-width="15" d="M312 122c0 12.15-68.053 22-152 22S8 134.15 8 122"/>`
+
+      const MOONS = [
+        `<circle cx="22" cy="171" r="22" fill="#BBBBBB"/>`,
+        `<circle cx="370" cy="106" r="16" fill="#BBBBBB"/>`,
+        `<circle cx="30" cy="11" r="11" fill="#BBBBBB"/>`,
+      ]
 
       function getHSL(hue, saturation, lightness) {
         return `hsl(${hue}, ${saturation}%, ${lightness}%)`
@@ -26,6 +30,15 @@
         })">${ROCKY_PLANET}</g>`
       }
 
+      function getMoons(numMoons) {
+        let moons = `<g transform="translate(50,170)">`
+        for (let i = 0; i < numMoons; i++) {
+          moons += MOONS[i]
+        }
+        moons += "</g>"
+        return moons
+      }
+
       function createSVG(planetSize, hasRings, numMoons, planetType, hue) {
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}" width="${CANVAS_SIZE}" height="${CANVAS_SIZE}" fill="none">
           <defs>
@@ -34,7 +47,7 @@
                 stroke: ${hasRings ? getHSL(hue, 100, 15) : "none"};
               }
               .body {
-                fill: ${getHSL(hue, 100, 34)};
+                fill: ${getHSL(hue, 70, 34)};
               }
               .water {
                 fill: ${planetType === 1 ? "#2680D9" : "none"};
@@ -52,6 +65,16 @@
         // Planet
         svg += getPlanet(planetSize, hue)
 
+        // Moons
+        svg += getMoons(numMoons)
+
+        // Text
+        svg += `<g transform="translate(440,470)">
+        <text x="13" y="0" fill="#fff" font-size="24" font-family="Helvetica">2D</text>
+        <text x="13" y="15" fill="#fff" font-size="12" font-family="Helvetica">VIEW</text>
+        </g>
+        `
+
         svg += `</svg>`
         return svg
       }
@@ -64,13 +87,13 @@
       // uint256 hue;
 
       function randomRange(min, max) {
-        return Math.floor(Math.random() * (max - min) + min)
+        return Math.floor(Math.random() * (max + 1 - min) + min)
       }
 
       let seed = randomRange(0, 1000000)
       let planetSize = randomRange(30, 100) // random(30, 170)
       let hasRings = randomRange(0, 10) === 5 // random() < 0.5 // 50% chance
-      let numMoons = 3 // randomRange(0, 3) // floor(random(0, 5)) // Up to 3 moons
+      let numMoons = randomRange(0, 3) // floor(random(0, 5)) // Up to 3 moons
       let planetType = randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
       let baseHue = randomRange(0, 360)
 

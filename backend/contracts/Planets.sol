@@ -9,9 +9,6 @@ import "./interfaces/IPlanets.sol";
 import "./interfaces/IPlanetsRenderer.sol";
 import "scripty.sol/contracts/scripty/IScriptyBuilder.sol";
 
-// TODO: Remove
-import "hardhat/console.sol";
-
 contract Planets is Base {
   uint256 public immutable supply;
   address public thumbnailAddress;
@@ -198,7 +195,7 @@ contract Planets is Base {
         ",",
         buildTrait("Number of Moons", utils.uint2str(settings.numMoons)),
         ",",
-        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Rocky" : "Gas"),
+        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Rocky" : "Gaseous"),
         ",",
         buildTrait("Planet Color", utils.getColorName(settings.hue)),
         "]"

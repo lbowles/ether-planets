@@ -14,5 +14,6 @@ struct Settings {
   uint256 numMoons;
   PlanetType planetType;
   uint256 hue;
-  bytes[6] vars;
+  bool hasWater;
+  bytes[7] vars;
 }

@@ -12,7 +12,7 @@
     <script>
       const CANVAS_SIZE = 500
       const BACKGROUND = `<g fill="#fff"><circle cx="50" cy="100" r="2" fill="#fff"/><circle cx="200" cy="150" r="2" fill="#fff"/><circle cx="300" cy="250" r="2" fill="#fff"/><circle cx="400" cy="75" r="2" fill="#fff"/><circle cx="175" cy="200" r="2" fill="#fff"/><circle cx="450" cy="350" r="2" fill="#fff"/><circle cx="125" cy="400" r="2" fill="#fff"/><circle cx="375" cy="300" r="2" fill="#fff"/><circle cx="225" cy="375" r="2" fill="#fff"/><circle cx="75" cy="250" r="2" fill="#fff"/><circle cx="25" cy="25" r="2" fill="#fff"/></g>`
-      const ROCKY_PLANET = `<path class="rings" stroke-width="15" d="M312 124c0-12.15-68.053-22-152-22S8 111.85 8 124"/><circle cx="159" cy="105" r="105" class="body"/><mask id="a" width="210" height="210" x="54" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha"><circle cx="159" cy="105" r="105" fill="#AC0000"/></mask><g class="water" mask="url(#a)"><path d="M176.497 59.5c1-4.333 5.1-16.9 13.5-32.5 6.402-4 22.67-6.333 30.003-7h29.5L281 72.5l-18.5 51H261c-1.2 1.2-4.5 1.167-6 1L234.5 113c-3.501-10-17.303-29.4-44.503-27-27.2 2.4-20.333-16.667-13.5-26.5ZM70 98.5c-6.8-2.8-13.167 5.167-15.5 9.5l-6 3 4.5 48.5 53.5 44c3.333-3.833 10.5-13.4 12.5-21 2.5-9.5-7-16.5-14.5-19.5s-4-18-1.5-24-7-18-17.5-24-7-13-15.5-16.5Z"/></g><path class="rings" stroke-width="15" d="M312 122c0 12.15-68.053 22-152 22S8 134.15 8 122"/>`
+      const PLANET = `<path class="rings" stroke-width="8.686" d="M149.379 79.264c0-5.756-32.406-10.423-72.38-10.423-39.976 0-72.382 4.667-72.382 10.423"/><ellipse cx="76.713" cy="69.999" class="body" rx="50.088" ry="49.798"/><mask id="a" width="101" height="102" x="26" y="19" maskUnits="userSpaceOnUse" style="mask-type:alpha"><circle cx="76.515" cy="70" r="50" fill="#AC0000" transform="rotate(-33.909 76.515 70)"/></mask><g mask="url(#a)"><path class="water" d="M84.845 48.333c.476-2.063 2.428-8.047 6.428-15.476 3.049-1.905 10.795-3.016 14.287-3.333h14.048l15 25-8.81 24.285h-.714c-.571.572-2.143.556-2.857.477l-9.762-5.477a20.235 20.235 0 0 0-21.192-12.857c-12.952 1.143-9.682-7.936-6.428-12.619ZM34.137 66.904c-3.239-1.333-6.27 2.46-7.381 4.524l-2.858 1.429 2.143 23.095 25.477 20.953c1.587-1.826 5-6.381 5.952-10 1.19-4.524-3.333-7.858-6.905-9.286-3.571-1.429-1.905-8.572-.714-11.429 1.19-2.857-3.334-8.571-8.334-11.428-5-2.858-3.333-6.19-7.38-7.858Z"/><path class="body-sec" d="M72.5 100.5C67 93.5 80 89.5 78 84c1.334-1.167 5.2-4.4 10-8 6-4.5 19.5 0 23 4.5s-.5 11-3.5 20c-2.4 7.2-10 8-13.5 7.5-5.333-.167-17.1-1.9-21.5-7.5ZM44 70.5c0-2-2.6-8.2-13-17l-4.5-2 20-25.5c2.167 1.833 7.3 4.4 10.5 0 4-5.5 10.5.5 13 5.5S61.5 41 70 42s8 1 8 11.5S72.5 57 72.5 65s-9 11-17 11c-6.4 0-10.333-3.667-11.5-5.5Z"/></g><path class="rings" stroke-width="8.686" d="M149.379 78.106c0 5.757-32.406 10.423-72.38 10.423-39.976 0-72.382-4.666-72.382-10.423"/>`
 
       const MOONS = [
         `<circle cx="22" cy="171" r="22" fill="#BBBBBB"/>`,
@@ -24,10 +24,10 @@
         return `hsl(${hue}, ${saturation}%, ${lightness}%)`
       }
 
-      function getPlanet(planetSize, hue) {
-        return `<g transform-origin="152 105" transform="translate(-54,0),translate(140,140),scale(0.4762),scale(${
-          planetSize / 30
-        })">${ROCKY_PLANET}</g>`
+      function getPlanet(planetSize) {
+        return `<g transform-origin="69 72" transform="translate(-26,-20),translate(182,200),scale(${
+          planetSize / 40
+        })">${PLANET}</g>`
       }
 
       function getMoons(numMoons) {
@@ -39,7 +39,7 @@
         return moons
       }
 
-      function createSVG(planetSize, hasRings, numMoons, planetType, hue) {
+      function createSVG(planetSize, hasRings, numMoons, planetType, hue, hasWater) {
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}" width="${CANVAS_SIZE}" height="${CANVAS_SIZE}" fill="none">
           <defs>
             <style>
@@ -47,10 +47,13 @@
                 stroke: ${hasRings ? getHSL(hue, 100, 15) : "none"};
               }
               .body {
-                fill: ${getHSL(hue, 70, 34)};
+                fill: ${getHSL(hue, 60, 40)};
+              }
+              .body-sec {
+                fill: ${planetType == 1 ? getHSL((hue + 5) % 360, 45, 50) : "none"};
               }
               .water {
-                fill: ${planetType === 1 ? "#2680D9" : "none"};
+                fill: ${hasWater === 1 ? "#2680D9" : "none"};
               }
             </style>
           </defs>
@@ -63,7 +66,7 @@
         svg += BACKGROUND
 
         // Planet
-        svg += getPlanet(planetSize, hue)
+        svg += getPlanet(planetSize)
 
         // Moons
         svg += getMoons(numMoons)
@@ -96,9 +99,22 @@
       let numMoons = randomRange(0, 3) // floor(random(0, 5)) // Up to 3 moons
       let planetType = randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
       let baseHue = randomRange(0, 360)
+      let hasWater = randomRange(0, 1)
+
+      console.log(
+        JSON.stringify({
+          planetSize,
+          hasRings,
+          numMoons,
+          planetType,
+          hasWater,
+          baseHue,
+          seed,
+        }),
+      )
 
       const canvas = document.createElement("span")
-      canvas.innerHTML = createSVG(planetSize, hasRings, numMoons, planetType, baseHue)
+      canvas.innerHTML = createSVG(planetSize, hasRings, numMoons, planetType, baseHue, hasWater)
       document.getElementById("canvasContainer").appendChild(canvas)
     </script>
   </body>

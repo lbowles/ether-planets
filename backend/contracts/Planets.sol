@@ -132,14 +132,8 @@ contract Planets is Base {
     return _totalMinted();
   }
 
-  function genVar(
-    uint256 _seed,
-    string memory _name,
-    uint256 _low,
-    uint256 _high
-  ) internal pure returns (uint256 value, bytes memory varString) {
-    value = utils.randomRange(_seed, _name, _low, _high);
-    varString = abi.encodePacked("var ", _name, "=", utils.uint2str(value), ";");
+  function formatVar(bytes memory _name, uint256 _value) internal pure returns (bytes memory) {
+    return abi.encodePacked("var ", _name, "=", utils.uint2str(_value), ";");
   }
 
   /**
@@ -147,30 +141,37 @@ contract Planets is Base {
    * @param _tokenId - Token ID for seed value
    * @return settings - All settings as a struct
    */
-  function buildSettings(uint256 _tokenId) internal pure returns (Settings memory settings) {
-    (uint256 seed, bytes memory varSeed) = genVar(_tokenId, "seed", 1, 1000000);
-    settings.seed = seed;
-    settings.vars[0] = varSeed;
+  function buildSettings(uint256 _tokenId) public pure returns (Settings memory settings) {
+    settings.seed = utils.randomRange(_tokenId, "seed", 1, 1000000);
+    settings.vars[0] = formatVar("seed", settings.seed);
 
-    (uint256 planetSize, bytes memory varPlanetSize) = genVar(_tokenId, "planetSize", 30, 170);
-    settings.planetSize = planetSize;
-    settings.vars[1] = varPlanetSize;
+    settings.planetSize = utils.randomRange(_tokenId, "planetSize", 30, 100);
+    settings.vars[1] = formatVar("planetSize", settings.planetSize);
 
-    (uint256 hasRings, bytes memory varHasRings) = genVar(_tokenId, "hasRings", 0, 1);
-    settings.hasRings = hasRings == 1;
-    settings.vars[2] = varHasRings;
+    // 40% gas, 60% rock
+    settings.planetType = utils.randomRange(_tokenId, "planetType", 0, 10) < 4 ? PlanetType.GAS : PlanetType.SOLID;
+    settings.vars[4] = formatVar("planetType", uint256(settings.planetType));
 
-    (uint256 numMoons, bytes memory varNumMoons) = genVar(_tokenId, "numMoons", 0, 5);
-    settings.numMoons = numMoons;
-    settings.vars[3] = varNumMoons;
+    // 30% of gaseous planets;
+    settings.hasRings = settings.planetType == PlanetType.GAS && utils.randomRange(_tokenId, "hasRings", 0, 10) < 3;
+    settings.vars[2] = formatVar("hasRings", settings.hasRings ? 1 : 0);
 
-    (uint256 planetType, bytes memory varPlanetType) = genVar(_tokenId, "planetType", 0, 1);
-    settings.planetType = PlanetType(planetType);
-    settings.vars[4] = varPlanetType;
+    {
+      // 25% 1 moon, 12% 2 moons, 3% 3 moons
+      uint256 observation = utils.randomRange(_tokenId, "numMoons", 0, 100);
+      if (observation < 25) settings.numMoons = 1;
+      else if (observation < 37) settings.numMoons = 2;
+      else if (observation < 40) settings.numMoons = 3;
+      else settings.numMoons = 0;
+      settings.vars[3] = formatVar("numMoons", settings.numMoons);
+    }
 
-    (uint256 planetColor, bytes memory varPlanetColor) = genVar(_tokenId, "baseHue", 0, 360);
-    settings.hue = planetColor;
-    settings.vars[5] = varPlanetColor;
+    settings.hue = utils.randomRange(_tokenId, "baseHue", 0, 360);
+    settings.vars[5] = formatVar("baseHue", settings.hue);
+
+    // If rocky, 30% water
+    settings.hasWater = settings.planetType == PlanetType.SOLID && utils.randomRange(_tokenId, "hasWater", 0, 10) < 3;
+    settings.vars[6] = formatVar("hasWater", settings.hasWater ? 1 : 0);
 
     return settings;
   }
@@ -181,8 +182,18 @@ contract Planets is Base {
    * @param _value - Trait value as string
    * @return trait - object as string
    */
-  function buildTrait(string memory _key, string memory _value) internal pure returns (string memory trait) {
-    return string.concat('{"trait_type":"', _key, '","value": "', _value, '"}');
+  function buildTraitString(string memory _key, string memory _value) internal pure returns (string memory trait) {
+    return string.concat('{"trait_type":"', _key, '","value":"', _value, '"}');
+  }
+
+  /**
+   * @notice Util function to help build traits where value is continuous
+   * @param _key - Trait key as string
+   * @param _value - Trait value as string
+   * @return trait - object as string
+   */
+  function buildTraitNumber(string memory _key, string memory _value) internal pure returns (string memory trait) {
+    return string.concat('{"trait_type":"', _key, '","value":', _value, "}");
   }
 
   /**
@@ -190,21 +201,21 @@ contract Planets is Base {
    * @param settings - Track settings struct
    * @return attr - array as a string
    */
-  function buildAttributes(Settings memory settings) internal pure returns (bytes memory attr) {
+  function buildAttributes(Settings memory settings) public pure returns (string memory attr) {
     return
-      abi.encodePacked(
+      string.concat(
         '"attributes": [',
-        buildTrait("Seed", utils.uint2str(settings.seed)),
+        buildTraitNumber("Planet Size", utils.uint2str(settings.planetSize)),
         ",",
-        buildTrait("Planet Size", utils.uint2str(settings.planetSize)),
+        buildTraitString("Has Rings", settings.hasRings ? "Yes" : "No"),
         ",",
-        buildTrait("Has Rings", settings.hasRings ? "Yes" : "No"),
+        buildTraitString("Has Water", settings.hasWater ? "Yes" : "No"),
         ",",
-        buildTrait("Number of Moons", utils.uint2str(settings.numMoons)),
+        buildTraitNumber("Number of Moons", utils.uint2str(settings.numMoons)),
         ",",
-        buildTrait("Planet Type", settings.planetType == PlanetType.SOLID ? "Rocky" : "Gaseous"),
+        buildTraitString("Planet Type", settings.planetType == PlanetType.SOLID ? "Rock" : "Gas"),
         ",",
-        buildTrait("Planet Color", utils.getColorName(settings.hue)),
+        buildTraitString("Planet Color", utils.getColorName(settings.hue)),
         "]"
       );
   }
@@ -214,11 +225,19 @@ contract Planets is Base {
    * @param settings - Track settings struct
    * @return vars - base64 encoded JS compatible setting variables
    */
-  function buildVars(Settings memory settings) internal pure returns (bytes memory vars) {
+  function buildVars(Settings memory settings) public pure returns (bytes memory vars) {
     return
       bytes(
         utils.encode(
-          abi.encodePacked(settings.vars[0], settings.vars[1], settings.vars[2], settings.vars[3], settings.vars[4])
+          abi.encodePacked(
+            settings.vars[0],
+            settings.vars[1],
+            settings.vars[2],
+            settings.vars[3],
+            settings.vars[4],
+            settings.vars[5],
+            settings.vars[6]
+          )
         )
       );
   }
@@ -237,13 +256,12 @@ contract Planets is Base {
 
     // Generate all the settings and various objects for the metadata
     Settings memory settings = buildSettings(_tokenId);
-    bytes memory attr = buildAttributes(settings);
+    string memory attr = buildAttributes(settings);
     bytes memory vars = buildVars(settings);
     string memory thumbnail = utils.encode(PlanetsThumbnail(thumbnailAddress).buildThumbnail(settings));
 
     bytes memory animationUri = IPlanetsRenderer(rendererAddress).buildAnimationURI(vars);
 
-    // TODO: Update this
     bytes memory json = abi.encodePacked(
       '{"name":"',
       "EtherPlanet #",

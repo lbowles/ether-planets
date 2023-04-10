@@ -170,12 +170,19 @@ function App() {
     <div className="App">
       <NoticeModal
         isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
+        onRequestClose={() => {
+          setIsModalOpen(false)
+          generalClickSound()
+          //TODO: mint?.()
+        }}
         // onMint={handleMint}
         onMint={() => {
+          generalClickSound()
           console.log("test mint")
+          setIsModalOpen(false)
         }}
       />
+      <LinksTab />
       <LandingCopy htmlFileURL={htmlFileURL} />
       <div className="absolute w-full  top-0 flex justify-end z-20 p-5">
         <ConnectButton />
@@ -200,6 +207,7 @@ function App() {
               onClick={() => {
                 generalClickSound()
                 setIsModalOpen(true)
+                setIsCustomVisible(false)
               }}
               className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px] mx-2"
               //TODO: disabled={disabled || loading}

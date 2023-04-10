@@ -6,13 +6,17 @@ import { BigNumber, ethers } from "ethers"
 import "@rainbow-me/rainbowkit/styles.css"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useAddRecentTransaction } from "@rainbow-me/rainbowkit"
-import { useAccount } from "wagmi"
+import { useAccount, useWaitForTransaction } from "wagmi"
 import deployments from "./deployments.json"
 import useSound from "use-sound"
+import { getOpenSeaLink } from "./utils/getOpenSeaLink"
 
 import smallClickEffect from "./sounds/smallClick.mp3"
 import generalClickEffect from "./sounds/generalClick.mp3"
+import mintEffect from "./sounds/mint.mp3"
 import blockSpinner from "./img/blockSpinner.svg"
+import { Footer } from "./components/Footer"
+import { LandingCopy } from "./components/LandingCopy"
 
 const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
 
@@ -29,9 +33,11 @@ function App() {
   const [mintBtnDisabled, setMintBtnDisabled] = useState<boolean>(true)
   const [mintBtnLoading, setMintBtnLoading] = useState<boolean>(false)
   const [isCustomVisible, setIsCustomVisible] = useState<boolean>(false)
+  const [mintedTokens, setMintedTokens] = useState<number[]>([])
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [smallClickSound] = useSound(smallClickEffect, { playbackRate: playbackRate })
   const [generalClickSound] = useSound(generalClickEffect)
+  const [mintSound] = useSound(mintEffect)
 
   // const {
   //   write: mint,
@@ -39,6 +45,11 @@ function App() {
   //   isLoading: isMintSignLoading,
   //   isSuccess: isMintSignSuccess,
   // } = useBlackHolesMint(mintConfig)
+
+  // const { data: mintTx, isLoading: isMintTxLoading } = useWaitForTransaction({
+  //   hash: mintSignResult?.hash,
+  //   confirmations: 1,
+  // })
 
   const handleAmountClick = (value: number) => {
     let tempPlaybackRate = playbackRate
@@ -83,26 +94,64 @@ function App() {
     }
   }
 
+  // TODO: useEffect(() => {
+  //   if (mintTx?.status === 1) {
+  //     //TODO: mintSound()
+  //     const tokenIds = mintTx.logs
+  //       .map((log) => {
+  //         try {
+  //           const events = BlackHoles__factory.createInterface().decodeEventLog("Transfer", log.data, log.topics)
+  //           return events.tokenId.toString()
+  //         } catch (e) {
+  //           return null
+  //         }
+  //       })
+  //       .filter((id) => id !== null)
+  //     setMintedTokens(tokenIds)
+  //   }
+  // }, [mintTx])
+
+  const displayMintedTokens = (tokens: number[]) => {
+    return (
+      <>
+        <span key={tokens[0]}>
+          <a
+            href={getOpenSeaLink(deployments.contracts.BlackHoles.address, tokens[0])}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white hover:underline no-underline transition-colors"
+          >
+            {tokens[0]}
+          </a>
+          &nbsp;
+        </span>
+        {tokens.length > 1 && (
+          <>
+            {" "}
+            ... &nbsp;
+            <span key={tokens[tokens.length - 1]}>
+              <a
+                href={getOpenSeaLink(deployments.chainId, tokens[tokens.length - 1])}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white hover:underline no-underline transition-colors"
+              >
+                {tokens[tokens.length - 1]}
+              </a>
+              &nbsp;
+            </span>
+          </>
+        )}
+      </>
+    )
+  }
+
   return (
     <div className="App">
       <div className="relative w-full flex justify-end z-10 p-5">
         <ConnectButton />
       </div>
-      <div className="front-content">
-        <div className="text-white flex justify-center text-3xl pt-[5vh] sm:pt-[17vh]">
-          <div style={{ fontFamily: "arial", marginTop: "1px" }}>Ξ</div>PLANETS
-        </div>
-        <div className="text-gray-400 flex justify-center sm:text-lg text-[16px] pt-6 text-center px-3 ">
-          Fully on-chain, procedurally generated, 3D planets.
-        </div>
-      </div>
-      <iframe
-        title="Embedded HTML File"
-        src={htmlFileURL}
-        className="full-screen-iframe"
-        style={{ border: "none" }}
-        scrolling="no"
-      ></iframe>
+      <LandingCopy htmlFileURL={htmlFileURL} />
       <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
           <div className="text-center text-[12px] pb-5 text-white">3/4242</div>
@@ -191,17 +240,25 @@ function App() {
             </>
           )}
         </div>
+        {/* TODO {mintTx && mintTx.status && (
+          <div>
+            <div className="w-full flex justify-center">
+              <a
+                //TODO: href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-base text-gray-500 hover:text-white hover:underline no-underline transition-colors pt-5"
+              >
+                View transaction
+              </a>
+            </div>
+            <p className="text-base text-gray-500 transition-colors w-full text-center pt-1">
+              Minted tokens: [ {displayMintedTokens(mintedTokens)}]
+            </p>
+          </div>
+        )} */}
       </div>
-      <div className="absolute bottom-[2%]  w-full  flex justify-center text-sm text-gray-600">
-        Made by
-        <a href="https://twitter.com/npm_luko" target="_blank" className="hover:underline text-blue-800 px-2">
-          @npm_luko
-        </a>
-        and{" "}
-        <a href="https://twitter.com/stephancill" target="_blank" className="hover:underline text-blue-800 px-2">
-          @stephancill
-        </a>
-      </div>
+      <Footer />
     </div>
   )
 }

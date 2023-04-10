@@ -43,7 +43,7 @@ function setup() {
     stars.push({
       x: random(min(-2000, -width * 1.5), floor(1000, width * 1.5)),
       y: random(min(-2000, -height * 1.5), floor(1000, height * 1.5)),
-      z: random(floor(1500, width * 1.5)),
+      z: random(floor(2000, width * 1.5)),
       radius: random(0.5, 2),
     })
   }

@@ -21,8 +21,8 @@
       }
 
       function getPlanet(planetSize, hue) {
-        return `<g transform="scale(${planetSize / 70}),translate(${90 + ((50 - planetSize) * 5) / 7},${
-          135 + ((50 - planetSize) * 5) / 7
+        return `<g transform-origin="152 105" transform="translate(-54,0),translate(140,140),scale(0.4762),scale(${
+          planetSize / 30
         })">${ROCKY_PLANET}</g>`
       }
 

@@ -8,6 +8,11 @@ import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useAddRecentTransaction } from "@rainbow-me/rainbowkit"
 import { useAccount } from "wagmi"
 import deployments from "./deployments.json"
+import useSound from "use-sound"
+
+import smallClickEffect from "./sounds/smallClick.mp3"
+import generalClickEffect from "./sounds/generalClick.mp3"
+import blockSpinner from "./img/blockSpinner.svg"
 
 const htmlFileURL = process.env.PUBLIC_URL + "/homeScreen.html"
 
@@ -23,6 +28,52 @@ function App() {
   const [totalPrice, setTotalPrice] = useState<BigNumber>()
   const [mintBtnDisabled, setMintBtnDisabled] = useState<boolean>(true)
   const [mintBtnLoading, setMintBtnLoading] = useState<boolean>(false)
+  const [isCustomVisible, setIsCustomVisible] = useState<boolean>(false)
+  const [playbackRate, setPlaybackRate] = useState(0.75)
+  const [smallClickSound] = useSound(smallClickEffect, { playbackRate: playbackRate })
+  const [generalClickSound] = useSound(generalClickEffect)
+
+  // const {
+  //   write: mint,
+  //   data: mintSignResult,
+  //   isLoading: isMintSignLoading,
+  //   isSuccess: isMintSignSuccess,
+  // } = useBlackHolesMint(mintConfig)
+
+  const handleAmountClick = (value: number) => {
+    let tempPlaybackRate = playbackRate
+
+    if (value > mintCount) {
+      for (let i = mintCount; i < value; i++) {
+        if (tempPlaybackRate < 10) {
+          tempPlaybackRate = tempPlaybackRate + 0.4
+        }
+      }
+      setPlaybackRate(tempPlaybackRate)
+      smallClickSound()
+    }
+    let tempMintCount = value
+    if (value < mintCount) {
+      for (let i = value; i < mintCount; i++) {
+        tempMintCount = tempMintCount - 1
+        if (tempMintCount < 24) {
+          if (tempPlaybackRate - 0.4 > 0.5) {
+            tempPlaybackRate = tempPlaybackRate - 0.4
+          }
+        }
+      }
+      setPlaybackRate(tempPlaybackRate)
+      smallClickSound()
+    }
+  }
+
+  const handleMintAmountChange = (amount: number) => {
+    setMintAmount(amount)
+    //TODO: change with mintPrince    bigNumber?.mul(amount)
+    const numberAsString = "42"
+    const bigNumber = BigNumber.from(numberAsString)
+    setTotalPrice(bigNumber?.mul(amount))
+  }
 
   return (
     <div className="App">
@@ -47,9 +98,54 @@ function App() {
       <div className="absolute sm:bottom-[25%] bottom-[21%] w-full  flex justify-center">
         <div>
           <div className="text-center text-[12px] pb-4 text-white">3/4242</div>
-          <button className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px]">
-            Mint 1 for 0.0042 Ξ
-          </button>
+          <div className="flex justify-center">
+            <button
+              className="text-gray-500 text-[36px] mt-[-5px] hover:text-white"
+              onClick={() => {
+                handleMintAmountChange(Math.max(1, mintCount - 1))
+                setIsCustomVisible(false)
+                handleAmountClick(mintCount - 1)
+              }}
+              // TODO: disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+            >
+              -
+            </button>
+            <button
+              onClick={() => {
+                generalClickSound()
+              }}
+              className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px] mx-2"
+              //TODO: disabled={disabled || loading}
+            >
+              {mintBtnLoading ? (
+                <div className="w-full flex justify-center h-full">
+                  <img className="h-full p-[12px]" src={blockSpinner}></img>
+                </div>
+              ) : (
+                // TODO:  {isMintSignLoading
+                //     ? "WAITING FOR WALLET"
+                //     : !account.isConnected
+                //     ? "CONNECT WALLET"
+                //     : totalPrice !== undefined
+                //     ? `MINT ${mintCount} FOR ${ethers.utils.formatEther(totalPrice)} ETH`
+                //     : "PRICE UNAVAILABLE"
+                // }
+                <>{mintCount}</>
+              )}
+            </button>
+            <button
+              //TODO: disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+              className="text-gray-500 text-3xl hover:text-white "
+              onClick={() => {
+                handleMintAmountChange(mintCount + 1)
+                setIsCustomVisible(false)
+                // handleAmountClickUp()
+                handleAmountClick(mintCount + 1)
+              }}
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
       <div className="absolute bottom-[2%]  w-full  flex justify-center text-sm text-gray-600">

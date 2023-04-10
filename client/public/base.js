@@ -39,11 +39,11 @@ function setup() {
   }
 
   // Generate stars
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 300; i++) {
     stars.push({
-      x: random(min(-3000, -width * 1.5), floor(1000, width * 1.5)),
-      y: random(min(-3000, -height * 1.5), floor(1000, height * 1.5)),
-      z: random(width * 1.5),
+      x: random(min(-2000, -width * 1.5), floor(1000, width * 1.5)),
+      y: random(min(-2000, -height * 1.5), floor(1000, height * 1.5)),
+      z: random(floor(1500, width * 1.5)),
       radius: random(0.5, 2),
     })
   }

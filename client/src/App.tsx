@@ -10,6 +10,7 @@ import { useAccount, useWaitForTransaction } from "wagmi"
 import deployments from "./deployments.json"
 import useSound from "use-sound"
 import { getOpenSeaLink } from "./utils/getOpenSeaLink"
+import NoticeModal from "./components/NoticeModal"
 
 import smallClickEffect from "./sounds/smallClick.mp3"
 import generalClickEffect from "./sounds/generalClick.mp3"
@@ -39,6 +40,7 @@ function App() {
   const [smallClickSound] = useSound(smallClickEffect, { playbackRate: playbackRate })
   const [generalClickSound] = useSound(generalClickEffect)
   const [mintSound] = useSound(mintEffect)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   // const {
   //   write: mint,
@@ -149,13 +151,19 @@ function App() {
 
   return (
     <div className="App">
+      <NoticeModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        // onMint={handleMint}
+        onMint={() => {
+          console.log("test mint")
+        }}
+      />
       <LandingCopy htmlFileURL={htmlFileURL} />
-
       <div className="absolute w-full  top-0 flex justify-end z-20 p-5">
         <ConnectButton />
       </div>
       {/* <LinksTab /> */}
-
       <div className="absolute sm:top-[66%] top-[66%] w-full  flex justify-center">
         <div>
           <div className="text-center text-[12px] pb-5 text-white">3/4242</div>
@@ -174,6 +182,7 @@ function App() {
             <button
               onClick={() => {
                 generalClickSound()
+                setIsModalOpen(true)
               }}
               className="transition-colors duration-300 bg-none hover:bg-white border-[1px] border-white text-white hover:text-black px-4 py-2 rounded text-[14px] mx-2"
               //TODO: disabled={disabled || loading}

@@ -78,29 +78,17 @@ function App() {
 
   const handleAmountClick = (value: number) => {
     let tempPlaybackRate = playbackRate
-
     if (value > mintCount) {
-      for (let i = mintCount; i < value; i++) {
-        if (tempPlaybackRate < 10) {
-          tempPlaybackRate = tempPlaybackRate + 0.4
-        }
+      if (tempPlaybackRate + 0.2 < 3) {
+        tempPlaybackRate = tempPlaybackRate + 0.2
       }
-      setPlaybackRate(tempPlaybackRate)
-      smallClickSound()
-    }
-    let tempMintCount = value
-    if (value < mintCount) {
-      for (let i = value; i < mintCount; i++) {
-        tempMintCount = tempMintCount - 1
-        if (tempMintCount < 24) {
-          if (tempPlaybackRate - 0.4 > 0.5) {
-            tempPlaybackRate = tempPlaybackRate - 0.4
-          }
-        }
+    } else {
+      if (0.5 < tempPlaybackRate - 0.2 && tempPlaybackRate - 0.2 < 3 && value < 13) {
+        tempPlaybackRate = tempPlaybackRate - 0.2
       }
-      setPlaybackRate(tempPlaybackRate)
-      smallClickSound()
     }
+    setPlaybackRate(tempPlaybackRate)
+    smallClickSound()
   }
 
   useEffect(() => {
@@ -239,29 +227,31 @@ function App() {
             )}
 
             <div className="flex justify-center">
-              <button
-                className={`text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3 disabled:hover:text-gray-500 ${
-                  soldOut && "hidden"
-                }`}
-                onClick={() => {
-                  handleMintAmountChange(Math.max(1, mintCount - 1))
-                  setIsCustomVisible(false)
-                  handleAmountClick(mintCount - 1)
-                }}
-                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut}
-              >
-                -
-              </button>
+              {!soldOut && (
+                <button
+                  className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3 disabled:hover:text-gray-500 "
+                  onClick={() => {
+                    handleMintAmountChange(Math.max(1, mintCount - 1))
+                    setIsCustomVisible(false)
+                    handleAmountClick(mintCount - 1)
+                  }}
+                  disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut}
+                >
+                  -
+                </button>
+              )}
               <button
                 onClick={() => {
                   generalClickSound()
                   setIsModalOpen(true)
                   setIsCustomVisible(false)
                 }}
-                className={`transition-colors duration-300 bg-none  border-[1px] min-w-[160px] ${
-                  !mintBtnDisabled && !isMintSignLoading && !isMintTxLoading && !soldOut && "hover:bg-white"
-                } border-white text-white hover:text-black  px-4 py-2 rounded text-[14px] mx-2 disabled:bg-none disabled:text-white disabled:border-gray-500`}
-                disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading || soldOut}
+                className={
+                  "transition-colors duration-300 bg-none border-[1px] min-w-[160px] border-white text-white hover:text-black hover:bg-white px-4 py-2 rounded text-[14px] mx-2 disabled:bg-transparent disabled:text-white disabled:border-gray-500 disabled:hover:bg-transparent"
+                }
+                disabled={
+                  mintBtnDisabled || isMintSignLoading || isMintTxLoading || soldOut || !isOpen || !account.isConnected
+                }
               >
                 {mintBtnLoading ? (
                   <div className="w-full flex justify-center h-full">
@@ -283,20 +273,22 @@ function App() {
                   </>
                 )}
               </button>
-              <button
-                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut || mintAmountTooHigh}
-                className={`text-gray-500 text-3xl pr-3 hover:text-white disabled:hover:text-gray-500 ${
-                  soldOut && "hidden"
-                } `}
-                onClick={() => {
-                  handleMintAmountChange(mintCount + 1)
-                  setIsCustomVisible(false)
-                  // handleAmountClickUp()
-                  handleAmountClick(mintCount + 1)
-                }}
-              >
-                +
-              </button>
+              {!soldOut && (
+                <button
+                  disabled={
+                    mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut || mintAmountTooHigh
+                  }
+                  className="text-gray-500 text-3xl pr-3 hover:text-white disabled:hover:text-gray-500"
+                  onClick={() => {
+                    handleMintAmountChange(mintCount + 1)
+                    setIsCustomVisible(false)
+                    // handleAmountClickUp()
+                    handleAmountClick(mintCount + 1)
+                  }}
+                >
+                  +
+                </button>
+              )}
             </div>
             {account.isConnected && !soldOut && (
               <>

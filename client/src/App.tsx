@@ -222,7 +222,7 @@ function App() {
           <div>
             {amountMinted != undefined && totalSupply != undefined && (
               <div className="text-center text-[12px] pb-5 text-white">
-                {amountMinted.toBigInt().toLocaleString()}/{totalSupply.toBigInt().toLocaleString()}
+                {amountMinted.toString()}/{totalSupply.toString()}
               </div>
             )}
 

@@ -225,7 +225,7 @@ contract Planets is ERC721A, Ownable {
         ",",
         buildTraitString("Has Water", settings.hasWater ? "Yes" : "No"),
         ",",
-        buildTraitNumber("Number of Moons", utils.uint2str(settings.numMoons)),
+        buildTraitString("Number of Moons", utils.uint2str(settings.numMoons)),
         ",",
         buildTraitString("Planet Type", settings.planetType == PlanetType.SOLID ? "Rock" : "Gas"),
         ",",

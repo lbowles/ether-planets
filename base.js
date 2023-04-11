@@ -33,7 +33,7 @@ function setup() {
     let r
     do {
       r = random()
-    } while (r < 0.2) // Should have at least 20% of the planet covered by water or primary colour
+    } while (r < 0.1 || r > 0.9) // Should have at least 20% of the planet covered by water or primary colour
     thresholds.push(r)
   }
   thresholds.sort()
@@ -44,7 +44,6 @@ function setup() {
   }
 
   // Generate stars
-  console.log(width * 1.5, height * 1.5)
   for (let i = 0; i < 300; i++) {
     stars.push({
       x: random(min(-3000, -width * 1.5), max(3000, width * 1.5)),
@@ -138,7 +137,7 @@ function generateTexture(elevationThresholds, colors, planetType) {
   let textureImg = createGraphics(248 * 2, 124 * 2)
   textureImg.noiseSeed(random(1000))
 
-  let noiseScale = planetType === 0 ? 1 : 4
+  let noiseScale = planetType === 0 ? 2 : 4
 
   for (let x = 0; x < textureImg.width; x++) {
     for (let y = 0; y < textureImg.height; y++) {
@@ -178,7 +177,7 @@ function generateTexture(elevationThresholds, colors, planetType) {
 
 function generateMoonTexture() {
   let textureImg = createGraphics(62, 31)
-  textureImg.noiseSeed(random(1000))
+  textureImg.noiseSeed(random(100000))
 
   for (let x = 0; x < textureImg.width; x++) {
     for (let y = 0; y < textureImg.height; y++) {

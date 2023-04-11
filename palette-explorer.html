@@ -24,12 +24,15 @@
       <input type="number" id="hue" name="hue" min="0" max="359" value="200" />
       <button type="submit">Generate Palette</button>
       <button type="button" id="randomize-hue">Randomize Hue</button>
+      <label for="water">Has Water:</label>
+      <input type="checkbox" id="water" name="water" onchange="hasWater = this.checked;" />
     </form>
     <div id="palette-container"></div>
     <script>
-      // ...Paste the generateExtraterrestrialColorPalette function here...
-      function generateExtraterrestrialColorPalette(baseHue) {
-        const colorPalette = []
+      let hasWater = false
+
+      function generatePlanetColors(baseHue) {
+        let colorPalette = []
         const hueVariation = 5
         const saturationBase = 60
         const saturationVariation = 15
@@ -39,18 +42,17 @@
         const waterSaturation = 70
         const waterLightness = 50
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
           let hue, saturation, lightness
-          if (i === 4) {
-            hue = waterHue
-            saturation = waterSaturation
-            lightness = waterLightness
-          } else {
-            hue = (baseHue + i * hueVariation) % 360
-            saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
-            lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
-          }
+          hue = (baseHue + i * hueVariation) % 360
+          saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
+          lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
           colorPalette.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`)
+        }
+
+        if (hasWater) {
+          const waterCol = `hsl(${waterHue}, ${waterSaturation}%, ${waterLightness}%)`
+          colorPalette = [waterCol, ...colorPalette]
         }
 
         return colorPalette
@@ -60,7 +62,7 @@
         event.preventDefault()
         const hue = parseInt(document.getElementById("hue").value)
 
-        const colorPalette = generateExtraterrestrialColorPalette(hue)
+        const colorPalette = generatePlanetColors(hue)
         const paletteContainer = document.getElementById("palette-container")
         paletteContainer.innerHTML = ""
 

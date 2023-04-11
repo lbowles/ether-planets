@@ -180,7 +180,7 @@ function App() {
                 href={getOpenSeaLink(deployments.contracts.Planets.address, tokens[tokens.length - 1])}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white hover:underline no-underline transition-colors"
+                className="text-blue-800 hover:underline no-underline transition-colors"
               >
                 {tokens[tokens.length - 1]}
               </a>
@@ -241,7 +241,7 @@ function App() {
                   setIsModalOpen(true)
                   setIsCustomVisible(false)
                 }}
-                className={`transition-colors duration-300 bg-none  border-[1px] ${
+                className={`transition-colors duration-300 bg-none  border-[1px] min-w-[160px] ${
                   !mintBtnDisabled && !isMintSignLoading && !isMintTxLoading && "hover:bg-white"
                 } border-white text-white hover:text-black  px-4 py-2 rounded text-[14px] mx-2 disabled:bg-none disabled:text-white disabled:border-gray-500`}
                 disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading}

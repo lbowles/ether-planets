@@ -47,6 +47,8 @@ function App() {
   const [isCustomVisible, setIsCustomVisible] = useState<boolean>(false)
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [soldOut, setSoldOut] = useState<boolean>(false)
+  const [mintAmountTooHigh, setMintAmountTooHigh] = useState<boolean>(false)
 
   const [playbackRate, setPlaybackRate] = useState(0.5)
   const [smallClickSound] = useSound(smallClickEffect, { playbackRate: playbackRate })
@@ -112,6 +114,12 @@ function App() {
   }, [priceLoading, isIsOpenLoading, amountMintedLoading, isMintTxLoading])
 
   const handleMintAmountChange = (amount: number) => {
+    if (amountMinted !== undefined && totalSupply) {
+      let max = totalSupply.sub(amountMinted).toNumber()
+      if (amount > max) {
+        amount = max
+      }
+    }
     setMintAmount(amount)
     setTotalPrice(mintPrice?.mul(amount))
   }
@@ -156,6 +164,13 @@ function App() {
       setMintedTokens(tokenIds)
     }
   }, [mintTx])
+
+  useEffect(() => {
+    if (amountMinted && totalSupply) {
+      setSoldOut(totalSupply.lte(amountMinted))
+      setMintAmountTooHigh(amountMinted.add(mintCount + 1).gt(totalSupply))
+    }
+  }, [totalSupply, amountMinted, mintCount])
 
   const displayMintedTokens = (tokens: number[]) => {
     return (
@@ -225,13 +240,15 @@ function App() {
 
             <div className="flex justify-center">
               <button
-                className="text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3"
+                className={`text-gray-500 text-[36px] mt-[-5px] hover:text-white pl-3 disabled:hover:text-gray-500 ${
+                  soldOut && "hidden"
+                }`}
                 onClick={() => {
                   handleMintAmountChange(Math.max(1, mintCount - 1))
                   setIsCustomVisible(false)
                   handleAmountClick(mintCount - 1)
                 }}
-                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
+                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut}
               >
                 -
               </button>
@@ -242,9 +259,9 @@ function App() {
                   setIsCustomVisible(false)
                 }}
                 className={`transition-colors duration-300 bg-none  border-[1px] min-w-[160px] ${
-                  !mintBtnDisabled && !isMintSignLoading && !isMintTxLoading && "hover:bg-white"
+                  !mintBtnDisabled && !isMintSignLoading && !isMintTxLoading && !soldOut && "hover:bg-white"
                 } border-white text-white hover:text-black  px-4 py-2 rounded text-[14px] mx-2 disabled:bg-none disabled:text-white disabled:border-gray-500`}
-                disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading}
+                disabled={mintBtnDisabled || isMintSignLoading || isMintTxLoading || soldOut}
               >
                 {mintBtnLoading ? (
                   <div className="w-full flex justify-center h-full">
@@ -258,6 +275,8 @@ function App() {
                       ? "Connect wallet"
                       : !isOpen
                       ? "Sale not started"
+                      : soldOut
+                      ? "Sold Out"
                       : totalPrice !== undefined
                       ? `Mint ${mintCount} for ${ethers.utils.formatEther(totalPrice)} ETH`
                       : "Price unavailable"}
@@ -265,8 +284,10 @@ function App() {
                 )}
               </button>
               <button
-                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading}
-                className="text-gray-500 text-3xl pr-3 hover:text-white"
+                disabled={mintBtnDisabled || !account.isConnected || isMintSignLoading || soldOut || mintAmountTooHigh}
+                className={`text-gray-500 text-3xl pr-3 hover:text-white disabled:hover:text-gray-500 ${
+                  soldOut && "hidden"
+                } `}
                 onClick={() => {
                   handleMintAmountChange(mintCount + 1)
                   setIsCustomVisible(false)
@@ -277,7 +298,7 @@ function App() {
                 +
               </button>
             </div>
-            {account.isConnected && (
+            {account.isConnected && !soldOut && (
               <>
                 <div className="w-full justify-center flex mt-1 transition-all">
                   <button
@@ -298,7 +319,6 @@ function App() {
                     }`}
                     type="number"
                     min="1"
-                    max="4000"
                     placeholder={mintCount.toString()}
                     onChange={(e) => {
                       let value = parseInt(e.target.value)

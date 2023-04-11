@@ -210,12 +210,12 @@ describe("Planets", function () {
     )
   })
 
-  it.only("Should not allow minting more than total supply", async function () {
+  it("Should not allow minting more than total supply", async function () {
     // Get current supply
     const totalSupply = await etherPlanets.supply()
 
     // Mint the max supply
-    await etherPlanets.mint(totalSupply)
+    await etherPlanets.mint(totalSupply, { value: mintPrice.mul(totalSupply) })
 
     // Check if supply has increased
     expect(await etherPlanets.totalSupply()).to.equal(totalSupply)

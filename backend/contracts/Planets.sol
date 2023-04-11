@@ -257,11 +257,11 @@ contract Planets is ERC721A, Ownable {
   }
 
   /**
-   * @notice Build the metadata including the full render html for the coaster
+   * @notice Build the metadata including the full render html for the planet
    * @dev This depends on
    *      - https://ethfs.xyz/ [stores code libraries]
    *      - https://github.com/intartnft/scripty.sol [builds rendering html and stores code libraries]
-   * @param _tokenId - TokenId to build coaster for
+   * @param _tokenId - TokenId to build planet for
    * @return metadata - as string
    */
   function tokenURI(uint256 _tokenId) public view virtual override(ERC721A) returns (string memory metadata) {

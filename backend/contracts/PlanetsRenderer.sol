@@ -42,7 +42,7 @@ contract PlanetsRenderer is IPlanetsRenderer {
     // - we do this to easily inject css and dom elements
     // - double urlencoded
     // - first block is css + some JS
-    // - second block is coaster settings [biome + speed]
+    // - second block is planet settings [planet traits]
     //
     // Final Output:
     // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L648
@@ -80,14 +80,14 @@ contract PlanetsRenderer is IPlanetsRenderer {
     requests[2].contractAddress = ethfsFileStorageAddress;
 
     // Step 4.
-    // - pull the coaster code from scriptyStorage
+    // - pull the planet code from scriptyStorage
     //   I could have stored on EthFS, but wanted to show that pulling from
     //   another contract is possible.
     // - wrapType 2 will handle the gzip script wrappers
     //
     // Final Output:
     // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L642
-    // <script type="text/javascript+gzip" src="data:text/javascript;base64,[cryptoCoaster.min.js.gz]"></script>
+    // <script type="text/javascript+gzip" src="data:text/javascript;base64,[filename.min.js.gz]"></script>
 
     requests[3].name = etherPlanetsScriptName;
     requests[3].wrapType = 2;

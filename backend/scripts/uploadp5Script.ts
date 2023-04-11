@@ -68,8 +68,8 @@ const func = async function () {
   const signer = await ethers.getSigner(deployer)
   const scriptyStorage = ScriptyStorage__factory.connect(scriptyStorageAddress, signer)
   const versionString = new Date().toISOString()
-  const filename = `etherplanets-${versionString}`
-  const txs = await generateStoreScriptTxs(scriptyStorage, `etherplanets-${versionString}`, "../../base.js")
+  const filename = `etherplanets-${versionString}` // "etherplanets-2023-04-11T10:29:40.947Z" //`etherplanets-${versionString}`
+  const txs = await generateStoreScriptTxs(scriptyStorage, filename, "../../base.js")
 
   // Save filename to a file
   fs.writeFileSync(path.join(__dirname, ".filename"), filename)

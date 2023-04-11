@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@rainbow-me/rainbowkit": "^0.11.0",
+    "@rainbow-me/rainbowkit": "^0.12.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -14,6 +14,7 @@
     "@types/react-modal": "^3.13.1",
     "ethers": "^5.7.2",
     "html-loader": "^4.2.0",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",
@@ -21,14 +22,14 @@
     "tailwindcss": "^3.3.1",
     "typescript": "^4.4.2",
     "use-sound": "^4.0.1",
-    "wagmi": "^0.11.5",
+    "wagmi": "^0.12.0",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "deploy": "gh-pages -d build",
     "predeploy": "wagmi generate && yarn run build",
     "prestart": "wagmi generate && echo \"declare const schema: $(cat src/deployments.json); export default schema;\" > src/deployments.json.d.ts"
@@ -53,6 +54,8 @@
   },
   "devDependencies": {
     "@wagmi/cli": "^0.1.15",
-    "gh-pages": "^5.0.0"
+    "customize-cra": "^1.0.0",
+    "gh-pages": "^5.0.0",
+    "react-app-rewired": "^2.2.1"
   }
 }

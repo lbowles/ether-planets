@@ -3,8 +3,8 @@
 // let hasRings = true // random() < 0.5 // 50% chance
 // let numMoons = 2 // floor(random(0, 5)) // Up to 3 moons
 // let planetType = 0 // 0 = gas, 1 = solid
-// let colors = []
 // let baseHue = 123 // random(0, 360)
+// let hasWater = true // random() < 0.1 // 10% chance
 
 let angle = 0
 let textureImg
@@ -24,36 +24,42 @@ function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL)
   colorMode(HSL, 360, 100, 100)
 
-  let numColors = 5
-  let randomPalette = generateExtraterrestrialColorPalette(baseHue)
+  let randomPalette = generatePlanetColors(baseHue)
+  let numColors = randomPalette.length
 
   colorMode(RGB, 255)
   let thresholds = []
   for (let i = 0; i < numColors - 1; i++) {
-    thresholds.push(random())
+    let r
+    do {
+      r = random()
+    } while (r < 0.2) // Should have at least 20% of the planet covered by water or primary colour
+    thresholds.push(r)
   }
   thresholds.sort()
-  let randomColorPalette = {
+
+  let textureInput = {
     thresholds: thresholds,
     colors: randomPalette,
   }
 
   // Generate stars
+  console.log(width * 1.5, height * 1.5)
   for (let i = 0; i < 300; i++) {
     stars.push({
-      x: random(min(-2000, -width * 1.5), floor(1000, width * 1.5)),
-      y: random(min(-2000, -height * 1.5), floor(1000, height * 1.5)),
-      z: random(floor(2000, width * 1.5)),
+      x: random(min(-3000, -width * 1.5), max(3000, width * 1.5)),
+      y: random(min(-3000, -height * 1.5), max(3000, height * 1.5)),
+      z: random(min(-3000, -width * 1.5), max(3000, height * 1.5)),
       radius: random(0.5, 2),
     })
   }
 
   initialRotationX = random(360)
   initialRotationY = 148
-  textureImg = generateTexture(randomColorPalette.thresholds, randomColorPalette.colors, planetType)
+  textureImg = generateTexture(textureInput.thresholds, textureInput.colors, planetType)
 
   if (hasRings) {
-    ringSize = random(planetSize * 1.3, planetSize * 1.5)
+    ringSize = random(planetSize * 1.4, planetSize * 1.5)
     ringTextureImg = generateRingTexture(randomPalette)
   }
 
@@ -78,12 +84,13 @@ function setup() {
     })
   }
 }
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight)
 }
 
-function generateExtraterrestrialColorPalette(baseHue) {
-  const colorPalette = []
+function generatePlanetColors(baseHue) {
+  let colorPalette = []
   const hueVariation = 5
   const saturationBase = 60
   const saturationVariation = 15
@@ -93,18 +100,16 @@ function generateExtraterrestrialColorPalette(baseHue) {
   const waterSaturation = 70
   const waterLightness = 50
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     let hue, saturation, lightness
-    if (i === 4) {
-      hue = waterHue
-      saturation = waterSaturation
-      lightness = waterLightness
-    } else {
-      hue = (baseHue + i * hueVariation) % 360
-      saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
-      lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
-    }
+    hue = (baseHue + i * hueVariation) % 360
+    saturation = Math.max(0, Math.min(100, saturationBase - i * saturationVariation))
+    lightness = Math.max(0, Math.min(100, lightnessBase + i * lightnessVariation))
     colorPalette.push(color(hue, saturation, lightness))
+  }
+
+  if (hasWater) {
+    colorPalette = [color(waterHue, waterSaturation, waterLightness), ...colorPalette]
   }
 
   return colorPalette
@@ -130,7 +135,7 @@ function generateRingTexture(colors) {
 }
 
 function generateTexture(elevationThresholds, colors, planetType) {
-  let textureImg = createGraphics(248, 124)
+  let textureImg = createGraphics(248 * 2, 124 * 2)
   textureImg.noiseSeed(random(1000))
 
   let noiseScale = planetType === 0 ? 1 : 4
@@ -147,12 +152,16 @@ function generateTexture(elevationThresholds, colors, planetType) {
       let found = false
       for (let i = 0; i < elevationThresholds.length; i++) {
         if (elevation < elevationThresholds[i]) {
-          col = lerpColor(
-            colors[i],
-            colors[i + 1],
-            (elevation - (i === 0 ? 0 : elevationThresholds[i - 1])) *
-              (1 / (elevationThresholds[i] - (i === 0 ? 0 : elevationThresholds[i - 1]))),
-          )
+          if (i == 0 && hasWater) {
+            col = colors[0]
+          } else {
+            col = lerpColor(
+              colors[i],
+              colors[i + 1],
+              (elevation - (i === 0 ? 0 : elevationThresholds[i - 1])) *
+                (1 / (elevationThresholds[i] - (i === 0 ? 0 : elevationThresholds[i - 1]))),
+            )
+          }
           found = true
           break
         }
@@ -216,13 +225,13 @@ function draw() {
   }
   pop()
 
-  let maxAngle = radians(20)
+  let maxAngle = radians(10)
   let mouseXRatio = map(mouseX, 0, width, -maxAngle, maxAngle)
   let mouseYRatio = map(mouseY, 0, height, -maxAngle, maxAngle)
   let camX = 400 * sin(mouseXRatio)
   let camY = -100 * cos(mouseYRatio)
   let camZ = 400
-  camera(camX, camY, camZ, 3, 0, 0, 0, 1, 0)
+  camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0)
 
   // Rotate planet
   push() // Add push() to isolate the rotation transformation

@@ -21,14 +21,16 @@
       let numMoons = randomRange(1, 3)
       let planetType = randomRange(0, 3) === 2 ? 1 : 0 // 0 = gas, 1 = solid
       let baseHue = randomRange(0, 360)
+      let hasWater = 1
 
       console.log({
-        seed,
         planetSize,
         hasRings,
         numMoons,
         planetType,
+        hasWater,
         baseHue,
+        seed,
       })
     </script>
     <script src="./base.js"></script>

@@ -9,11 +9,18 @@ contract PlanetsRenderer is IPlanetsRenderer {
   address public immutable ethfsFileStorageAddress;
   address public immutable scriptyBuilderAddress;
   address public immutable scriptyStorageAddress;
+  string public etherPlanetsScriptName;
 
-  constructor(address _ethfsFileStorageAddress, address _scriptyBuilderAddress, address _scriptyStorageAddress) {
+  constructor(
+    address _ethfsFileStorageAddress,
+    address _scriptyBuilderAddress,
+    address _scriptyStorageAddress,
+    string memory _etherPlanetsScriptName
+  ) {
     ethfsFileStorageAddress = _ethfsFileStorageAddress;
     scriptyBuilderAddress = _scriptyBuilderAddress;
     scriptyStorageAddress = _scriptyStorageAddress;
+    etherPlanetsScriptName = _etherPlanetsScriptName;
   }
 
   /**
@@ -82,7 +89,7 @@ contract PlanetsRenderer is IPlanetsRenderer {
     // https://github.com/intartnft/scripty.sol/blob/main/contracts/scripty/ScriptyBuilder.sol#L642
     // <script type="text/javascript+gzip" src="data:text/javascript;base64,[cryptoCoaster.min.js.gz]"></script>
 
-    requests[3].name = "etherplanets-v1";
+    requests[3].name = etherPlanetsScriptName;
     requests[3].wrapType = 2;
     requests[3].contractAddress = scriptyStorageAddress;
 

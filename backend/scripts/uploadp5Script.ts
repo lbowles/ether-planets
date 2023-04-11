@@ -1,14 +1,13 @@
-import fs from "fs"
-import { ethers } from "hardhat"
-import path from "path"
-import { ScriptyStorage } from "../types/ScriptyStorage"
-import { DeployFunction } from "hardhat-deploy/types"
-import { HardhatRuntimeEnvironment } from "hardhat/types"
-import { ScriptyStorage__factory } from "../types"
+import babelMinify from "@node-minify/babel-minify"
+import minify from "@node-minify/core"
 import { PopulatedTransaction } from "ethers"
 import { gzipSync } from "fflate"
-import minify from "@node-minify/core"
-import babelMinify from "@node-minify/babel-minify"
+import fs from "fs"
+import * as hre from "hardhat"
+import path from "path"
+import { ScriptyStorage, ScriptyStorage__factory } from "../types"
+
+const { ethers } = hre
 
 function chunkSubstr(str: string, size: number) {
   return str.split(new RegExp("(.{" + size.toString() + "})")).filter((O) => O)
@@ -54,7 +53,7 @@ async function generateStoreScriptTxs(storageContract: ScriptyStorage, name: str
   return txs
 }
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const func = async function () {
   // Check if .filename exists, if it does, skip
   if (fs.existsSync(path.join(__dirname, ".filename"))) {
     console.log("Skipping p5script deployment")
@@ -85,6 +84,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await rawTx({ ...tx, to: tx.to!, from: deployer })
   }
 }
-export default func
-func.tags = ["p5script"]
-func.dependencies = []
+func()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

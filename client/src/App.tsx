@@ -78,29 +78,17 @@ function App() {
 
   const handleAmountClick = (value: number) => {
     let tempPlaybackRate = playbackRate
-
     if (value > mintCount) {
-      for (let i = mintCount; i < value; i++) {
-        if (tempPlaybackRate < 10) {
-          tempPlaybackRate = tempPlaybackRate + 0.4
-        }
+      if (tempPlaybackRate + 0.2 < 3) {
+        tempPlaybackRate = tempPlaybackRate + 0.2
       }
-      setPlaybackRate(tempPlaybackRate)
-      smallClickSound()
-    }
-    let tempMintCount = value
-    if (value < mintCount) {
-      for (let i = value; i < mintCount; i++) {
-        tempMintCount = tempMintCount - 1
-        if (tempMintCount < 24) {
-          if (tempPlaybackRate - 0.4 > 0.5) {
-            tempPlaybackRate = tempPlaybackRate - 0.4
-          }
-        }
+    } else {
+      if (0.5 < tempPlaybackRate - 0.2 && tempPlaybackRate - 0.2 < 3 && value < 13) {
+        tempPlaybackRate = tempPlaybackRate - 0.2
       }
-      setPlaybackRate(tempPlaybackRate)
-      smallClickSound()
     }
+    setPlaybackRate(tempPlaybackRate)
+    smallClickSound()
   }
 
   useEffect(() => {

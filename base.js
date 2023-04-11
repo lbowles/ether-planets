@@ -21,7 +21,7 @@ let moonTextures = []
 
 function setup() {
   randomSeed(seed)
-  createCanvas(500, 500, WEBGL)
+  createCanvas(windowWidth, windowHeight, WEBGL)
   colorMode(HSL, 360, 100, 100)
 
   let randomPalette = generatePlanetColors(baseHue)
@@ -44,11 +44,12 @@ function setup() {
   }
 
   // Generate stars
-  for (let i = 0; i < 500; i++) {
+  console.log(width * 1.5, height * 1.5)
+  for (let i = 0; i < 300; i++) {
     stars.push({
-      x: random(-width * 5, width * 5),
-      y: random(-height * 5, height * 5),
-      z: random(width * 5),
+      x: random(min(-3000, -width * 1.5), max(3000, width * 1.5)),
+      y: random(min(-3000, -height * 1.5), max(3000, height * 1.5)),
+      z: random(min(-3000, -width * 1.5), max(3000, height * 1.5)),
       radius: random(0.5, 2),
     })
   }
@@ -82,6 +83,10 @@ function setup() {
       orbitAngle: orbitAngle, // Add the orbitAngle property to the moon object
     })
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight)
 }
 
 function generatePlanetColors(baseHue) {

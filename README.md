@@ -1,6 +1,6 @@
 # ΞPlanets
 
-This is the code repository for Ether Planets, a fully on-chain, procedurally generated, 3D Planets. 
+This is the code repository for Ether Planets, a fully on-chain, procedurally generated, 3D Planets.
 
 ## Stack
 
@@ -28,14 +28,6 @@ Start node
 cd backend
 yarn
 yarn start
-```
-
-### Hardhat UI
-
-Start hardhat ui
-
-```
-yarn ui
 ```
 
 ### Frontend

@@ -70,7 +70,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const scriptyStorage = ScriptyStorage__factory.connect(scriptyStorageAddress, signer)
   const versionString = new Date().toISOString()
   const filename = `etherplanets-${versionString}`
-  const txs = await generateStoreScriptTxs(scriptyStorage, `etherplanets-${versionString}`, "../../base.js")
+  const txs = await generateStoreScriptTxs(scriptyStorage, filename, "../../base.js")
 
   // Save filename to a file
   fs.writeFileSync(path.join(__dirname, ".filename"), filename)

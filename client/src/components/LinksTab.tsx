@@ -5,6 +5,7 @@ import etherscan from "../img/icons/etherscan.svg"
 import useSound from "use-sound"
 import linkClickEffect from "../sounds/linkClick.mp3"
 import deployments from "../deployments.json"
+import fox from "../img/icons/fox.webp"
 
 export const LinksTab = () => {
   const [linkClickSound] = useSound(linkClickEffect)
@@ -45,6 +46,16 @@ export const LinksTab = () => {
         }}
       >
         <img src={etherscan}></img>
+      </a>
+      <a
+        target="_blank"
+        href={`https://onchainchecker.xyz/collection/ethereum/0xdabb3cc7c35147e985bab67799219b363830cf5a/37`}
+        onClick={() => {
+          // linkClickSound()
+        }}
+        className=" border border-white rounded-full bg-white"
+      >
+        <img src={fox} width={23}></img>
       </a>
     </div>
   )

@@ -14,7 +14,7 @@ export const LinksTab = () => {
         target="_blank"
         href="https://opensea.io/collection/etherplanets-onchain"
         onClick={() => {
-          linkClickSound()
+          // linkClickSound()
         }}
       >
         <img src={opensea}></img>
@@ -23,7 +23,7 @@ export const LinksTab = () => {
         target="_blank"
         href="https://twitter.com/0xEtherPlanets"
         onClick={() => {
-          linkClickSound()
+          // linkClickSound()
         }}
       >
         <img src={twitter}></img>
@@ -32,7 +32,7 @@ export const LinksTab = () => {
         target="_blank"
         href="https://github.com/lbowles/ether-planets"
         onClick={() => {
-          linkClickSound()
+          // linkClickSound()
         }}
       >
         <img src={gihub}></img>
@@ -41,7 +41,7 @@ export const LinksTab = () => {
         target="_blank"
         href={`https://etherscan.io/address/${deployments.contracts.Planets.address}`}
         onClick={() => {
-          linkClickSound()
+          // linkClickSound()
         }}
       >
         <img src={etherscan}></img>

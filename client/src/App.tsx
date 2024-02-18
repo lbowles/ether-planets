@@ -221,9 +221,7 @@ function App() {
         <div className=" w-full  flex justify-center">
           <div>
             {amountMinted != undefined && totalSupply != undefined && (
-              <div className="text-center text-[12px] pb-5 text-white">
-                {amountMinted.toString()}/{totalSupply.toString()}
-              </div>
+              <div className="text-center text-[12px] pb-5 text-white">Total supply: {amountMinted.toString()}</div>
             )}
 
             <div className="flex justify-center">
@@ -264,7 +262,7 @@ function App() {
                       : !account.isConnected
                       ? "Connect wallet"
                       : !isOpen
-                      ? "Sale not started"
+                      ? "Sale ended"
                       : soldOut
                       ? "Sold Out"
                       : totalPrice !== undefined

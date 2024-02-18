@@ -10,6 +10,7 @@ import {
 import Link from "next/link"
 import sharp from "sharp"
 import { convertToSvg1, getPlanetsSvg } from "../utils/util"
+import Redirect from "./Redirect"
 
 type State = {
   seed: number
@@ -46,11 +47,15 @@ export default async function Home({ params, searchParams }: NextServerPageProps
   const pngBuffer = await sharp(Buffer.from(containerSvg)).resize(500, 500).png().toBuffer()
 
   return (
-    <div className="p-4">
-      frames.js starter kit. The Template Frame is on this page, it&apos;s in the html meta tags (inspect source).{" "}
-      <Link href={`/debug?url=${baseUrl}`} className="underline">
+    <div className="p-4 bg-black h-screen flex justify-center ">
+      <p className="text-white"> Redirecting to </p>
+      <a className="text-blue-400 pl-1" href="https://etherplanets.com">
+        etherplanets.com
+      </a>
+      <Redirect />
+      {/* <Link href={`/debug?url=${baseUrl}`} className="underline">
         Debug
-      </Link>
+      </Link> */}
       <FrameContainer postUrl="/frames" pathname="/" state={state} previousFrame={previousFrame}>
         {/* <FrameImage src="https://framesjs.org/og.png" /> */}
         <FrameImage aspectRatio="1:1" src={`data:image/png;base64,${pngBuffer.toString("base64")}`}></FrameImage>

@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.35e85d3a.css",
-    "main.js": "/static/js/main.9f1ab3b4.js",
+    "main.js": "/static/js/main.89c28755.js",
     "static/js/510.0c7fe483.chunk.js": "/static/js/510.0c7fe483.chunk.js",
     "static/js/89.a6b89c7b.chunk.js": "/static/js/89.a6b89c7b.chunk.js",
     "static/js/389.e89ee850.chunk.js": "/static/js/389.e89ee850.chunk.js",
@@ -32,7 +32,7 @@
     "static/js/247.f197d965.chunk.js": "/static/js/247.f197d965.chunk.js",
     "static/js/942.10947e8f.chunk.js": "/static/js/942.10947e8f.chunk.js",
     "static/js/27.5b5c1a86.chunk.js": "/static/js/27.5b5c1a86.chunk.js",
-    "static/js/119.27150b42.chunk.js": "/static/js/119.27150b42.chunk.js",
+    "static/js/119.6d298692.chunk.js": "/static/js/119.6d298692.chunk.js",
     "static/js/836.53dbfe0d.chunk.js": "/static/js/836.53dbfe0d.chunk.js",
     "static/media/mint.mp3": "/static/media/mint.09c84ac434bb4e8e8bd1.mp3",
     "static/media/submit.mp3": "/static/media/submit.56fab081e4700806ac45.mp3",
@@ -40,15 +40,15 @@
     "static/media/generalClick.mp3": "/static/media/generalClick.cae4df8659a39954469b.mp3",
     "static/media/smallClick.mp3": "/static/media/smallClick.c4048d1aa45c24e3cd65.mp3",
     "static/media/opensea.svg": "/static/media/opensea.99754c7461ee3c216dc14ad0637afd05.svg",
+    "index.html": "/index.html",
     "static/media/twitter.svg": "/static/media/twitter.769a4d567079c4d82876961bd186a88e.svg",
     "static/media/etherscan.svg": "/static/media/etherscan.369d37698e9ae28d5fe2cead98784b3c.svg",
-    "index.html": "/index.html",
     "static/media/github.svg": "/static/media/github.bc7f7ed840be81a67d7bb37f820a6df6.svg",
     "static/media/fox.webp": "/static/media/fox.a0262c002750dc0beb3c.webp",
     "static/media/loadingSpinner.svg": "/static/media/loadingSpinner.b505f0a0a1c844fc9c8e73d98d0a592b.svg"
   },
   "entrypoints": [
     "static/css/main.35e85d3a.css",
-    "static/js/main.9f1ab3b4.js"
+    "static/js/main.89c28755.js"
   ]
 }

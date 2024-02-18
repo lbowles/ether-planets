@@ -220,7 +220,7 @@ function App() {
       <div className="absolute sm:top-[66%] top-[66%] w-full">
         <div className=" w-full  flex justify-center">
           <div>
-            {amountMinted != undefined && totalSupply != undefined && (
+            {amountMinted !== undefined && totalSupply !== undefined && (
               <div className="text-center text-[12px] pb-5 text-white">
                 Minted: {amountMinted.toString()} / {totalSupply.toString()}
               </div>
